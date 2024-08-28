@@ -7,6 +7,16 @@ body {
     font-family: Tahoma;
     font-size: 3vw;
 }
+h1 {
+    position:relative;
+    padding-top: 10px;
+    font-size:4vw;
+}
+h2 {
+    position:relative;
+    padding-top: 10px;
+    font-size:3.5vw;
+}
 .main {
     /* margin-top: 2.2em; */
     position:relative;
@@ -74,7 +84,7 @@ tr:hover {
     text-align: center;
     padding: 10px 10px;
     text-decoration: none;
-    font-size: calc(18px + 1.5vw);    
+    font-size: calc(16px + 1.5vw);    
     /* font-size: max(4vw, 12px); */
     /* font-size: 3vw; */
 }
