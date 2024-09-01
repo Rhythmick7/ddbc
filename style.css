@@ -5,23 +5,23 @@
 body {
     margin-top: 50px;
     font-family: Tahoma;
-    font-size: 3vw;
+    font-size: min(12px,3vw);
 }
 h1 {
     position:relative;
     padding-top: 10px;
-    font-size:4vw;
+    font-size: min(16px,4vw);
 }
 h2 {
     position:relative;
     padding-top: 10px;
-    font-size:3.5vw;
+    font-size: min(14px,3.5vw);
 }
 .main {
     /* margin-top: 2.2em; */
     position:relative;
     padding-top: 10px;
-    
+    font-size: min(12px,3vw);
 }
 .welcome {
     font-size: 24pt;
