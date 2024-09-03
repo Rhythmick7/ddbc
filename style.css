@@ -57,8 +57,14 @@ table, th, td {
     text-align:left;
     padding: 5px;
   }
+th.leftcol {
+    width:25%;
+}
+th.schdcol{
+    width:25%;
+}
 tr {
-    height: 60px;
+    min-height: 60px;
 }
 
 th[scope='col'] {
