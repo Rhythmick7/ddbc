@@ -10,18 +10,28 @@ body {
 h1 {
     position:relative;
     padding-top: 10px;
-    font-size: min(16px,4vw);
+    font-size: min(20px,4vw);
 }
 h2 {
     position:relative;
     padding-top: 10px;
-    font-size: min(14px,3.5vw);
+    font-size: min(18px,3.5vw);
+}
+h3 {
+    position:relative;
+    padding-top: 10px;
+    font-size: min(16px,3.5vw);
+}
+h4 {
+    position:relative;
+    padding-top: 10px;
+    font-size: min(14px,3vw);
 }
 .main {
     /* margin-top: 2.2em; */
     position:relative;
     padding-top: 10px;
-    font-size: min(12px,3vw);
+    font-size: min(14px,3vw);
 }
 .welcome {
     font-size: 24pt;
@@ -29,7 +39,7 @@ h2 {
     font-weight: 800;
 }
 .emphasis {
-    font-size: 14pt;
+    font-size: 16pt;
     font-weight: 600;
 }
 .bright {
