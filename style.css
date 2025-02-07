@@ -28,7 +28,7 @@ h4 {
     font-size: 1em;
 }
 .main {
-    /* margin-top: 2.2em; */
+    scroll-padding-top: 2.8rem;
     position: static;
     padding-top: 10px;
     font-size: 1.8em;
@@ -97,6 +97,7 @@ tr:hover {
 
 .topnav a {
     float: left;
+    display: block;
     color: #f2f2f2;
     text-align: center;
     padding: 10px 10px;
@@ -114,6 +115,11 @@ tr:hover {
 .topnav a.active {
     background-color: #04AA6D;
     color: white;
+}
+
+.top-spacer {
+    position: relative; 
+    top: 2.8rem;
 }
 
 .BN-container {
