@@ -8,27 +8,15 @@ body {
     font-size: min(12px,3vw);
 }
 h1 {
-    /* scroll-padding-top: 46px; */
-    /* position:relative; */
-    /* padding-top: 46px; */
     font-size: 1.4em;
 }
 h2 {
-    /* scroll-padding-top: 46px; */
-    /* position:relative; */
-    /* padding-top: 46px; */
     font-size: 1.2em;
 }
 h3 {
-    /* scroll-padding-top: 46px; */
-    /* position:relative; */
-    /* padding-top: 46px; */
     font-size: 1.1em;
 }
 h4 {
-    /* scroll-padding-top: 46px; */
-    /* position:relative; */
-    /* padding-top: 46px; */
     font-size: 1em;
 }
 .main {
