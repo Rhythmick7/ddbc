@@ -3,34 +3,38 @@
     height: auto;
 }
 body {
-    margin-top: 50px;
+    margin-top: 46px;
     font-family: Tahoma;
     font-size: min(12px,3vw);
 }
 h1 {
-    position:relative;
-    padding-top: 10px;
+    /* scroll-padding-top: 46px; */
+    /* position:relative; */
+    /* padding-top: 46px; */
     font-size: 1.4em;
 }
 h2 {
-    position:relative;
-    padding-top: 10px;
+    /* scroll-padding-top: 46px; */
+    /* position:relative; */
+    /* padding-top: 46px; */
     font-size: 1.2em;
 }
 h3 {
-    position:relative;
-    padding-top: 10px;
+    /* scroll-padding-top: 46px; */
+    /* position:relative; */
+    /* padding-top: 46px; */
     font-size: 1.1em;
 }
 h4 {
-    position:relative;
-    padding-top: 10px;
+    /* scroll-padding-top: 46px; */
+    /* position:relative; */
+    /* padding-top: 46px; */
     font-size: 1em;
 }
 .main {
-    scroll-padding-top: 2.8rem;
+    scroll-padding-top: 46px;
     position: static;
-    padding-top: 10px;
+    padding-top: 46px;
     font-size: 1.8em;
 }
 
