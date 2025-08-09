@@ -74,6 +74,8 @@ h4 {
     border-bottom: 3px solid rgb(116, 113, 113);
     padding: 10px;
 }
+
+/* Tables */
 table, th, td {
     border: 2px solid rgb(171, 169, 169);
     border-collapse: collapse;
@@ -109,6 +111,10 @@ td[scope='match'] {
 tr:hover {
     background-color: #d9e3e3;
 } 
+.trophy-table {
+    background-image: url('media/wood.jpg');
+    width: 100%;
+}
 
 
 
