@@ -76,37 +76,26 @@ h4 {
 }
 
 /* Tables */
-table, th, td {
+table, th, td, tr {
     border: 2px solid rgb(171, 169, 169);
     border-collapse: collapse;
     text-align:left;
     padding: 5px;
     font-size: 1rem;
+    background-color:  #e8e8f8;
   }
-th.leftcol {
-    width:10%;
-}
-th.schdcol{
-    width:30%;
-}
-tr {
-    min-height: 60px;
-}
 
 th[scope='col'] {
-    background-color:  #e8e8f8;;
+    background-color:  #e8e8f8;
   }
 th[scope='row'] {
     background-color: #e8e8f8;
 }
-td {
+td[scope='event'] {
     background-color: rgb(241, 245, 239);
 }
 td[scope='busy'] {
     background-color: #a6e28c;
-}
-td[scope='match'] {
-    text-align: center;
 }
 tr:hover {
     background-color: #d9e3e3;
