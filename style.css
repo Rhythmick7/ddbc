@@ -76,7 +76,7 @@ h4 {
 }
 
 /* Tables */
-table, th, td, tr {
+table, th, sch.td, tr {
     border: 2px solid rgb(171, 169, 169);
     border-collapse: collapse;
     text-align:left;
@@ -101,9 +101,13 @@ tr:hover {
     background-color: #d9e3e3;
 } 
 .trophy-table {
-    background-image: url('media/wood.jpg');
+    /* background-image: url('media/wood.jpg'); */
     width: 100%;
+    /* background-color: transparent;
+    color: gold;
+    padding: 20px 20px; */
 }
+
 
 
 
