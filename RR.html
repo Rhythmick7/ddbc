@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Balanced 2v2/1v2 Scheduler</title>
+<title>Round Robin Schedule Generator</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -33,8 +33,10 @@ button {
   cursor: pointer;
   font-weight: bold;
 }
-button:hover { background-color: #1e40af; }
+button:hover { opacity: 0.9; }
 .export-btn { display: none; background-color: #16a34a; }
+#exportPDF { background-color: #f59e0b; }
+#exportPDF:hover { background-color: #b45309; }
 .round {
   background: white;
   border-radius: 10px;
@@ -56,7 +58,7 @@ li {
 </style>
 </head>
 <body>
-<h1>Balanced 2v2/1v2 Scheduler</h1>
+<h1>Round Robin Schedule Generator</h1>
 
 <div class="controls">
   <!-- Line 1: Players & Rounds -->
@@ -79,6 +81,7 @@ li {
   <div>
     <button onclick="generateSchedule()">Generate</button>
     <button id="exportFull" class="export-btn">Export Full CSV</button>
+    <button id="exportPDF" class="export-btn">Export Schedule as PDF</button>
   </div>
 </div>
 
@@ -106,7 +109,6 @@ function generateBalancedSchedule(nPlayers, nRounds, mode) {
     let matches = [];
     let used = new Set();
 
-    // Handle odd players
     if(nPlayers%2===1){
       if(mode==='1v2'){
         const candidates = shuffled.filter(p=>!used.has(p));
@@ -130,7 +132,6 @@ function generateBalancedSchedule(nPlayers, nRounds, mode) {
       }
     }
 
-    // Create 2v2 matches
     let active = shuffled.filter(p=>!used.has(p));
     while(active.length>=4){
       active.sort((a,b)=>Math.random()-0.5);
@@ -140,7 +141,6 @@ function generateBalancedSchedule(nPlayers, nRounds, mode) {
     }
     rounds.push({matches});
 
-    // Update counts
     matches.forEach(m=>{
       if(m.is1v2){
         const i1=index[m.team1[0]];
@@ -202,7 +202,9 @@ function generateSchedule(){
     container.appendChild(div);
   });
 
+  // Show both export buttons after generating
   document.getElementById('exportFull').style.display='inline-block';
+  document.getElementById('exportPDF').style.display='inline-block';
 }
 
 function exportFullCSV(){
@@ -225,7 +227,7 @@ function exportFullCSV(){
   csv+=','+currentPlayers.join(',')+'\n';
   currentOpponents.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
 
-  downloadCSV(csv,`2v2_full_schedule_${currentSchedule.length}rounds.csv`);
+  downloadCSV(csv,`round_robin_schedule_${currentSchedule.length}rounds.csv`);
 }
 
 function downloadCSV(content,filename){
@@ -238,7 +240,32 @@ function downloadCSV(content,filename){
   URL.revokeObjectURL(url);
 }
 
+function exportSchedulePDF() {
+  if (!currentSchedule.length) return;
+  const printWindow = window.open('', '', 'width=800,height=600');
+  printWindow.document.write('<html><head><title>Round Robin Schedule</title>');
+  printWindow.document.write('<style>body{font-family:Arial,sans-serif;} h2{margin-top:20px;} ul{list-style:none;padding:0;} li{margin:4px 0;}</style>');
+  printWindow.document.write('</head><body>');
+  currentSchedule.forEach((round, i) => {
+    printWindow.document.write(`<h2>Round ${i + 1}</h2><ul>`);
+    round.matches.forEach(m => {
+      let text='';
+      if(m.is1v2) text=`${m.team1[0]} vs ${m.team2.join(' + ')}`;
+      else if(m.sitout) text=`Sit-out: ${m.sitout}`;
+      else text=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+      printWindow.document.write(`<li>${text}</li>`);
+    });
+    printWindow.document.write('</ul>');
+  });
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
+}
+
 document.getElementById('exportFull').addEventListener('click',exportFullCSV);
+document.getElementById('exportPDF').addEventListener('click',exportSchedulePDF);
 </script>
 </body>
 </html>
