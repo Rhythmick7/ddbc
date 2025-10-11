@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2v2 Schedule Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    input {
+      width: 60px;
+      text-align: center;
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #1e40af;
+    }
+    .export-btn {
+      display: none;
+      background-color: #16a34a;
+    }
+    .round {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin: 10px 0;
+      padding: 15px;
+      width: 100%;
+      max-width: 600px;
+    }
+    .round h2 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+    }
+    .sitout {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 5px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      background: #f1f5f9;
+      margin: 4px 0;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Round Robin Schedule Generator</h1>
+  <div class="controls">
+    <label>Players: <input type="number" id="players" value="12" min="8" max="26" /></label>
+    <label>Rounds: <input type="number" id="rounds" value="4" min="1" /></label>
+    <button onclick="generateSchedule()">Generate</button>
+    <button id="exportFull" class="export-btn">Export Full CSV</button>
+  </div>
+  <div id="schedule"></div>
+
+  <script>
+    function makePlayers(n) {
+      return Array.from({ length: n }, (_, i) => String.fromCharCode(65 + i));
+    }
+
+    function randomSchedule(nPlayers, nRounds) {
+      const players = makePlayers(nPlayers);
+      const matchesPerRound = Math.floor(nPlayers / 4);
+      const sitoutsPerRound = nPlayers - matchesPerRound * 4;
+
+      const rounds = [];
+      for (let r = 0; r < nRounds; r++) {
+        const shuffled = [...players].sort(() => Math.random() - 0.5);
+        const sitouts = shuffled.slice(0, sitoutsPerRound);
+        const active = shuffled.slice(sitoutsPerRound);
+        const matches = [];
+        for (let i = 0; i < matchesPerRound; i++) {
+          const group = active.slice(i * 4, i * 4 + 4).sort(() => Math.random() - 0.5);
+          matches.push({ team1: [group[0], group[1]], team2: [group[2], group[3]] });
+        }
+        rounds.push({ sitouts, matches });
+      }
+      return rounds;
+    }
+
+    let currentSchedule = [];
+    let currentPlayers = [];
+
+    function generateSchedule() {
+      const nPlayers = parseInt(document.getElementById('players').value);
+      const nRounds = parseInt(document.getElementById('rounds').value);
+      if (nPlayers < 8 || nPlayers > 26) {
+        alert('Use between 8 and 26 players.');
+        return;
+      }
+
+      currentPlayers = makePlayers(nPlayers);
+      currentSchedule = randomSchedule(nPlayers, nRounds);
+
+      const container = document.getElementById('schedule');
+      container.innerHTML = '';
+
+      currentSchedule.forEach((round, i) => {
+        const div = document.createElement('div');
+        div.className = 'round';
+
+        const title = document.createElement('h2');
+        title.textContent = `Round ${i + 1}`;
+        div.appendChild(title);
+
+        if (round.sitouts.length > 0) {
+          const sit = document.createElement('div');
+          sit.className = 'sitout';
+          sit.textContent = 'Sit out: ' + round.sitouts.join(', ');
+          div.appendChild(sit);
+        }
+
+        const ul = document.createElement('ul');
+        round.matches.forEach((m) => {
+          const li = document.createElement('li');
+          li.textContent = `${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+          ul.appendChild(li);
+        });
+
+        div.appendChild(ul);
+        container.appendChild(div);
+      });
+
+      document.getElementById('exportFull').style.display = 'inline-block';
+    }
+
+    function buildMatrices() {
+      const n = currentPlayers.length;
+      const teammates = Array.from({ length: n }, () => Array(n).fill(0));
+      const opponents = Array.from({ length: n }, () => Array(n).fill(0));
+      const index = Object.fromEntries(currentPlayers.map((p, i) => [p, i]));
+
+      currentSchedule.forEach(round => {
+        round.matches.forEach(m => {
+          const team1 = m.team1, team2 = m.team2;
+          // teammates
+          teammates[index[team1[0]]][index[team1[1]]] += 1;
+          teammates[index[team1[1]]][index[team1[0]]] += 1;
+          teammates[index[team2[0]]][index[team2[1]]] += 1;
+          teammates[index[team2[1]]][index[team2[0]]] += 1;
+          // opponents
+          team1.forEach(p1 => {
+            team2.forEach(p2 => {
+              opponents[index[p1]][index[p2]] += 1;
+              opponents[index[p2]][index[p1]] += 1;
+            });
+          });
+        });
+      });
+      return { teammates, opponents };
+    }
+
+    function exportFullCSV() {
+      if (!currentSchedule.length) return;
+
+      const { teammates, opponents } = buildMatrices();
+
+      let csv = '=== Match Schedule ===\n';
+      csv += 'Round,Match,Team 1,Team 2,Sit Outs\n';
+      currentSchedule.forEach((round, i) => {
+        const sit = round.sitouts.join(' ');
+        round.matches.forEach((m, j) => {
+          csv += `${i + 1},${j + 1},"${m.team1.join(' + ')}","${m.team2.join(' + ')}","${sit}"\n`;
+        });
+      });
+
+      csv += '\n=== Teammate Matrix ===\n';
+      csv += ',' + currentPlayers.join(',') + '\n';
+      teammates.forEach((row, i) => {
+        csv += currentPlayers[i] + ',' + row.join(',') + '\n';
+      });
+
+      csv += '\n=== Opponent Matrix ===\n';
+      csv += ',' + currentPlayers.join(',') + '\n';
+      opponents.forEach((row, i) => {
+        csv += currentPlayers[i] + ',' + row.join(',') + '\n';
+      });
+
+      downloadCSV(csv, `2v2_full_schedule_${currentSchedule.length}rounds.csv`);
+    }
+
+    function downloadCSV(content, filename) {
+      const blob = new Blob([content], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('exportFull').addEventListener('click', exportFullCSV);
+  </script>
+</body>
+</html>
