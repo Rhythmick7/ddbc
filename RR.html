@@ -188,18 +188,36 @@ function generateSchedule(){
     title.textContent=`Round ${i+1}`;
     div.appendChild(title);
     const ul=document.createElement('ul');
+
+    let playersInRound = new Set();
     round.matches.forEach(m=>{
-      const li=document.createElement('li');
-      if(m.is1v2) li.textContent=`${m.team1[0]} vs ${m.team2.join(' + ')}`;
-      else if(m.sitout) li.textContent=`Sit-out: ${m.sitout}`;
-      else li.textContent=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+      let li = document.createElement('li');
+      if(m.is1v2){
+        li.textContent=`${m.team1[0]} vs ${m.team2.join(' + ')}`;
+        m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+      } else if(m.sitout){
+        li.textContent=`Sit-out: ${m.sitout}`;
+        playersInRound.add(m.sitout);
+      } else {
+        li.textContent=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+        m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+      }
       ul.appendChild(li);
     });
+
+    // Add any players not in a match as sit-outs
+    currentPlayers.forEach(p=>{
+      if(!playersInRound.has(p)){
+        let li = document.createElement('li');
+        li.textContent=`Sit-out: ${p}`;
+        ul.appendChild(li);
+      }
+    });
+
     div.appendChild(ul);
     container.appendChild(div);
   });
 
-  // Show both export buttons after generating
   document.getElementById('exportFull').style.display='inline-block';
   document.getElementById('exportPDF').style.display='inline-block';
 }
@@ -207,7 +225,6 @@ function generateSchedule(){
 function exportFullCSV(){
   if(!currentSchedule.length) return;
 
-  // === Match Schedule ===
   let csv='=== Match Schedule ===\n';
   csv+='Round,Match,Team 1,Team 2\n';
   currentSchedule.forEach((round,i)=>{
@@ -218,31 +235,33 @@ function exportFullCSV(){
     });
   });
 
-  // === Player Match Count ===
+  // Player Match Count including sit-outs
   csv+='\n=== Player Match Count ===\n';
-  csv+='Player,Matches Played\n';
+  csv+='Player,Matches Played,Matches Sat Out\n';
   const matchCount = currentPlayers.map(p=>{
-    let count=0;
+    let played=0;
     currentSchedule.forEach(round=>{
+      let inMatch=false;
       round.matches.forEach(m=>{
-        if(m.sitout) { if(m.sitout===p) count+=0; }
-        else if(m.is1v2){
-          if(m.team1.includes(p) || m.team2.includes(p)) count++;
-        } else {
-          if(m.team1.includes(p) || m.team2.includes(p)) count++;
-        }
+        if(m.sitout && m.sitout===p) return;
+        else if(m.is1v2 && (m.team1.includes(p) || m.team2.includes(p))) inMatch=true;
+        else if(!m.is1v2 && !m.sitout && (m.team1.includes(p) || m.team2.includes(p))) inMatch=true;
       });
+      if(inMatch) played++;
     });
-    return count;
+    return played;
   });
-  currentPlayers.forEach((p,i)=>csv+=`${p},${matchCount[i]}\n`);
+  currentPlayers.forEach((p,i)=>{
+    const satOut = currentSchedule.length - matchCount[i];
+    csv+=`${p},${matchCount[i]},${satOut}\n`;
+  });
 
-  // === Teammate Matrix ===
+  // Teammate Matrix
   csv+='\n=== Teammate Matrix ===\n';
   csv+=','+currentPlayers.join(',')+'\n';
   currentTeammates.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
 
-  // === Opponent Matrix ===
+  // Opponent Matrix
   csv+='\n=== Opponent Matrix ===\n';
   csv+=','+currentPlayers.join(',')+'\n';
   currentOpponents.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
@@ -275,6 +294,20 @@ function exportSchedulePDF() {
       else text=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
       printWindow.document.write(`<li>${text}</li>`);
     });
+
+    // Also include players not in a match as sit-outs in PDF
+    const playersInRound = new Set();
+    round.matches.forEach(m=>{
+      if(m.is1v2) m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+      else if(m.sitout) playersInRound.add(m.sitout);
+      else m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+    });
+    currentPlayers.forEach(p=>{
+      if(!playersInRound.has(p)){
+        printWindow.document.write(`<li>Sit-out: ${p}</li>`);
+      }
+    });
+
     printWindow.document.write('</ul>');
   });
   printWindow.document.write('</body></html>');
