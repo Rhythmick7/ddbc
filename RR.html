@@ -61,10 +61,11 @@ li {
 <h1>Round Robin Schedule Generator</h1>
 
 <div class="controls">
-  <!-- Line 1: Players & Rounds -->
+  <!-- Line 1: Players, Rounds, Max Matches -->
   <div>
-    <label>Players: <input type="number" id="players" value="12" min="3" max="26" /></label>
+    <label>Players: <input type="number" id="players" value="12" min="3" max="32" /></label>
     <label>Rounds: <input type="number" id="rounds" value="4" min="1" /></label>
+    <label>Max Matches/Round: <input type="number" id="maxMatches" value="4" min="1" /></label>
   </div>
 
   <!-- Line 2: Extra Player Mode -->
@@ -97,14 +98,14 @@ function makePlayers(n) {
   return Array.from({ length: n }, (_, i) => String.fromCharCode(65 + i));
 }
 
-function generateBalancedSchedule(nPlayers, nRounds, mode) {
+function generateBalancedSchedule(nPlayers, nRounds, mode, maxMatches) {
   const players = makePlayers(nPlayers);
   const teammateCount = Array.from({ length: nPlayers }, () => Array(nPlayers).fill(0));
   const opponentCount = Array.from({ length: nPlayers }, () => Array(nPlayers).fill(0));
   const index = Object.fromEntries(players.map((p,i)=>[p,i]));
   const rounds = [];
 
-  for(let r=0;r<nRounds;r++){
+  for(let r=0; r<nRounds; r++){
     let shuffled = [...players].sort(()=>Math.random()-0.5);
     let matches = [];
     let used = new Set();
@@ -112,14 +113,6 @@ function generateBalancedSchedule(nPlayers, nRounds, mode) {
     if(nPlayers%2===1){
       if(mode==='1v2'){
         const candidates = shuffled.filter(p=>!used.has(p));
-        candidates.sort((a,b)=>{
-          let sumA=0,sumB=0;
-          for(let p of candidates){
-            if(p!==a) sumA+=opponentCount[index[a]][index[p]];
-            if(p!==b) sumB+=opponentCount[index[b]][index[p]];
-          }
-          return sumA-sumB;
-        });
         const p1 = candidates[0];
         used.add(p1);
         const remaining = candidates.filter(p=>p!==p1).slice(0,2);
@@ -133,11 +126,12 @@ function generateBalancedSchedule(nPlayers, nRounds, mode) {
     }
 
     let active = shuffled.filter(p=>!used.has(p));
-    while(active.length>=4){
-      active.sort((a,b)=>Math.random()-0.5);
+    let matchCount = 0;
+    while(active.length>=4 && matchCount < maxMatches){
       let group = active.slice(0,4);
       matches.push({team1:[group[0],group[1]], team2:[group[2],group[3]], is1v2:false});
       group.forEach(p=>active.splice(active.indexOf(p),1));
+      matchCount++;
     }
     rounds.push({matches});
 
@@ -172,11 +166,14 @@ function generateBalancedSchedule(nPlayers, nRounds, mode) {
 function generateSchedule(){
   const nPlayers = parseInt(document.getElementById('players').value);
   const nRounds = parseInt(document.getElementById('rounds').value);
+  const maxMatches = parseInt(document.getElementById('maxMatches').value);
   const mode = document.getElementById('extraMode').value;
-  if(nPlayers<3||nPlayers>26){ alert('Use between 3 and 26 players.'); return; }
+
+  if(nPlayers<3||nPlayers>32){ alert('Use between 3 and 32 players.'); return; }
+  if(maxMatches<1){ alert('Max matches per round must be at least 1.'); return; }
 
   currentPlayers = makePlayers(nPlayers);
-  const result = generateBalancedSchedule(nPlayers,nRounds,mode);
+  const result = generateBalancedSchedule(nPlayers,nRounds,mode,maxMatches);
   currentSchedule = result.rounds;
   currentTeammates = result.teammates;
   currentOpponents = result.opponents;
@@ -209,6 +206,8 @@ function generateSchedule(){
 
 function exportFullCSV(){
   if(!currentSchedule.length) return;
+
+  // === Match Schedule ===
   let csv='=== Match Schedule ===\n';
   csv+='Round,Match,Team 1,Team 2\n';
   currentSchedule.forEach((round,i)=>{
@@ -219,10 +218,31 @@ function exportFullCSV(){
     });
   });
 
+  // === Player Match Count ===
+  csv+='\n=== Player Match Count ===\n';
+  csv+='Player,Matches Played\n';
+  const matchCount = currentPlayers.map(p=>{
+    let count=0;
+    currentSchedule.forEach(round=>{
+      round.matches.forEach(m=>{
+        if(m.sitout) { if(m.sitout===p) count+=0; }
+        else if(m.is1v2){
+          if(m.team1.includes(p) || m.team2.includes(p)) count++;
+        } else {
+          if(m.team1.includes(p) || m.team2.includes(p)) count++;
+        }
+      });
+    });
+    return count;
+  });
+  currentPlayers.forEach((p,i)=>csv+=`${p},${matchCount[i]}\n`);
+
+  // === Teammate Matrix ===
   csv+='\n=== Teammate Matrix ===\n';
   csv+=','+currentPlayers.join(',')+'\n';
   currentTeammates.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
 
+  // === Opponent Matrix ===
   csv+='\n=== Opponent Matrix ===\n';
   csv+=','+currentPlayers.join(',')+'\n';
   currentOpponents.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
