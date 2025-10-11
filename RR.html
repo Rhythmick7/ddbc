@@ -61,14 +61,11 @@ li {
 <h1>Round Robin Schedule Generator</h1>
 
 <div class="controls">
-  <!-- Line 1: Players, Rounds, Max Matches -->
   <div>
     <label>Players: <input type="number" id="players" value="12" min="3" max="32" /></label>
     <label>Rounds: <input type="number" id="rounds" value="4" min="1" /></label>
     <label>Max Matches/Round: <input type="number" id="maxMatches" value="4" min="1" /></label>
   </div>
-
-  <!-- Line 2: Extra Player Mode -->
   <div>
     <label>Extra Player Mode:
       <select id="extraMode">
@@ -77,8 +74,6 @@ li {
       </select>
     </label>
   </div>
-
-  <!-- Line 3: Buttons -->
   <div>
     <button onclick="generateSchedule()">Generate</button>
     <button id="exportFull" class="export-btn">Export Full CSV</button>
@@ -104,30 +99,35 @@ function generateBalancedSchedule(nPlayers, nRounds, mode, maxMatches) {
   const opponentCount = Array.from({ length: nPlayers }, () => Array(nPlayers).fill(0));
   const index = Object.fromEntries(players.map((p,i)=>[p,i]));
   const rounds = [];
+  const sitOutCount = Array(nPlayers).fill(0);
 
   for(let r=0; r<nRounds; r++){
     let shuffled = [...players].sort(()=>Math.random()-0.5);
     let matches = [];
     let used = new Set();
 
-    if(nPlayers%2===1){
-      if(mode==='1v2'){
-        const candidates = shuffled.filter(p=>!used.has(p));
+    if(nPlayers % 2 === 1){
+      if(mode === '1v2'){
+        const candidates = shuffled.filter(p => !used.has(p));
         const p1 = candidates[0];
         used.add(p1);
         const remaining = candidates.filter(p=>p!==p1).slice(0,2);
         remaining.forEach(p=>used.add(p));
         matches.push({team1:[p1], team2:remaining, is1v2:true});
       } else {
-        const sitOut = shuffled[0];
-        used.add(sitOut);
-        matches.push({sitout:sitOut});
+        const available = shuffled.filter(p=>!used.has(p));
+        const minSit = Math.min(...available.map(p=>sitOutCount[index[p]]));
+        const minPlayers = available.filter(p=>sitOutCount[index[p]]===minSit);
+        const sitOutPlayer = minPlayers[0];
+        sitOutCount[index[sitOutPlayer]]++;
+        used.add(sitOutPlayer);
+        matches.push({sitout:sitOutPlayer});
       }
     }
 
     let active = shuffled.filter(p=>!used.has(p));
     let matchCount = 0;
-    while(active.length>=4 && matchCount < maxMatches){
+    while(active.length >= 4 && matchCount < maxMatches){
       let group = active.slice(0,4);
       matches.push({team1:[group[0],group[1]], team2:[group[2],group[3]], is1v2:false});
       group.forEach(p=>active.splice(active.indexOf(p),1));
@@ -143,9 +143,7 @@ function generateBalancedSchedule(nPlayers, nRounds, mode, maxMatches) {
           opponentCount[i1][j]+=1;
           opponentCount[j][i1]+=1;
         });
-      } else if(m.sitout){
-        // do nothing
-      } else {
+      } else if(!m.sitout){
         const [a,b]=m.team1,[c,d]=m.team2;
         teammateCount[index[a]][index[b]]+=1;
         teammateCount[index[b]][index[a]]+=1;
@@ -190,28 +188,36 @@ function generateSchedule(){
     const ul=document.createElement('ul');
 
     let playersInRound = new Set();
+    const sitOuts = [];
+
+    // Matches first
     round.matches.forEach(m=>{
-      let li = document.createElement('li');
       if(m.is1v2){
+        let li = document.createElement('li');
         li.textContent=`${m.team1[0]} vs ${m.team2.join(' + ')}`;
+        ul.appendChild(li);
+        m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+      } else if(!m.sitout){
+        let li = document.createElement('li');
+        li.textContent=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+        ul.appendChild(li);
         m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
       } else if(m.sitout){
-        li.textContent=`Sit-out: ${m.sitout}`;
+        sitOuts.push(m.sitout);
         playersInRound.add(m.sitout);
-      } else {
-        li.textContent=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
-        m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
       }
-      ul.appendChild(li);
     });
 
-    // Add any players not in a match as sit-outs
+    // Then sit-outs
     currentPlayers.forEach(p=>{
       if(!playersInRound.has(p)){
-        let li = document.createElement('li');
-        li.textContent=`Sit-out: ${p}`;
-        ul.appendChild(li);
+        sitOuts.push(p);
       }
+    });
+    sitOuts.forEach(p=>{
+      let li = document.createElement('li');
+      li.textContent=`Sit-out: ${p}`;
+      ul.appendChild(li);
     });
 
     div.appendChild(ul);
@@ -235,7 +241,6 @@ function exportFullCSV(){
     });
   });
 
-  // Player Match Count including sit-outs
   csv+='\n=== Player Match Count ===\n';
   csv+='Player,Matches Played,Matches Sat Out\n';
   const matchCount = currentPlayers.map(p=>{
@@ -256,12 +261,10 @@ function exportFullCSV(){
     csv+=`${p},${matchCount[i]},${satOut}\n`;
   });
 
-  // Teammate Matrix
   csv+='\n=== Teammate Matrix ===\n';
   csv+=','+currentPlayers.join(',')+'\n';
   currentTeammates.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
 
-  // Opponent Matrix
   csv+='\n=== Opponent Matrix ===\n';
   csv+=','+currentPlayers.join(',')+'\n';
   currentOpponents.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
@@ -285,31 +288,41 @@ function exportSchedulePDF() {
   printWindow.document.write('<html><head><title>Round Robin Schedule</title>');
   printWindow.document.write('<style>body{font-family:Arial,sans-serif;} h2{margin-top:20px;} ul{list-style:none;padding:0;} li{margin:4px 0;}</style>');
   printWindow.document.write('</head><body>');
+
   currentSchedule.forEach((round, i) => {
     printWindow.document.write(`<h2>Round ${i + 1}</h2><ul>`);
+    const sitOuts = [];
+    const playersInRound = new Set();
+
+    // Matches first
     round.matches.forEach(m => {
-      let text='';
-      if(m.is1v2) text=`${m.team1[0]} vs ${m.team2.join(' + ')}`;
-      else if(m.sitout) text=`Sit-out: ${m.sitout}`;
-      else text=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
-      printWindow.document.write(`<li>${text}</li>`);
+      let text = '';
+      if(m.is1v2){
+        text = `${m.team1[0]} vs ${m.team2.join(' + ')}`;
+        m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+      } else if(!m.sitout){
+        text = `${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+        m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
+      } else if(m.sitout){
+        sitOuts.push(m.sitout);
+        playersInRound.add(m.sitout);
+      }
+      if(text) printWindow.document.write(`<li>${text}</li>`);
     });
 
-    // Also include players not in a match as sit-outs in PDF
-    const playersInRound = new Set();
-    round.matches.forEach(m=>{
-      if(m.is1v2) m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
-      else if(m.sitout) playersInRound.add(m.sitout);
-      else m.team1.concat(m.team2).forEach(p=>playersInRound.add(p));
-    });
+    // Then sit-outs
     currentPlayers.forEach(p=>{
       if(!playersInRound.has(p)){
-        printWindow.document.write(`<li>Sit-out: ${p}</li>`);
+        sitOuts.push(p);
       }
+    });
+    sitOuts.forEach(p=>{
+      printWindow.document.write(`<li>Sit-out: ${p}</li>`);
     });
 
     printWindow.document.write('</ul>');
   });
+
   printWindow.document.write('</body></html>');
   printWindow.document.close();
   printWindow.focus();
