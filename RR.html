@@ -1,80 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Round Robin Schedule Generator</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f8fafc;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-h1 { font-size: 28px; margin-bottom: 20px; }
-.controls > div {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-input { width: 100px; text-align: center; padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
-button {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-button:hover { opacity: 0.9; }
-.export-btn { display: none; background-color: #16a34a; }
-#exportPDF { background-color: #f59e0b; }
-#exportPDF:hover { background-color: #b45309; }
-.round {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin: 10px 0;
-  padding: 15px;
-  width: 100%;
-  max-width: 650px;
-}
-.round h2 { margin: 0 0 8px 0; font-size: 20px; }
-ul { list-style: none; padding: 0; margin: 0; }
-li {
-  background: #f1f5f9;
-  margin: 4px 0;
-  padding: 6px 8px;
-  border-radius: 4px;
-  font-family: monospace;
-}
-#summary {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-top: 20px;
-  padding: 15px;
-  width: 100%;
-  max-width: 650px;
-}
-#summary h2 { margin-top: 0; }
-#summary table {
-  width: 100%;
-  border-collapse: collapse;
-}
-#summary th, #summary td {
-  border: 1px solid #ddd;
-  text-align: center;
-  padding: 6px;
-}
-#summary th { background-color: #f3f4f6; }
+  body { font-family: Arial, sans-serif; background:#f8fafc; margin:0; padding:20px; display:flex; flex-direction:column; align-items:center; }
+  h1 { font-size:28px; margin-bottom:20px; }
+  .controls > div { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center; margin-bottom:10px; }
+  input { width:120px; text-align:center; padding:6px; border:1px solid #ccc; border-radius:6px; }
+  button { background:#2563eb; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; }
+  button:hover { opacity:0.95; }
+  .export-btn { display:none; background:#16a34a; }
+  #exportPDF { background:#f59e0b; }
+  #exportPDF:hover { background:#b45309; }
+  .round { background:white; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08); margin:10px 0; padding:14px; width:100%; max-width:720px; }
+  .round h2 { margin:0 0 8px 0; font-size:20px; }
+  ul { list-style:none; padding:0; margin:0; }
+  li { background:#f1f5f9; margin:6px 0; padding:8px 10px; border-radius:6px; font-family:monospace; }
+  #summary { background:white; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.08); margin-top:16px; padding:12px; width:100%; max-width:720px; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { border:1px solid #e6e6e6; padding:6px; text-align:center; }
+  th { background:#f3f4f6; }
+  @media (max-width:600px){ input { width:100%; } .controls > div { flex-direction:column; align-items:stretch; } }
 </style>
 </head>
 <body>
@@ -82,12 +30,12 @@ li {
 
 <div class="controls">
   <div>
-    <label>Players: <input type="number" id="players" value="12" min="3" max="32" /></label>
-    <label>Rounds: <input type="number" id="rounds" value="4" min="1" /></label>
-    <label>Max Matches/Round: <input type="number" id="maxMatches" value="4" min="1" /></label>
+    <label>Players: <input id="players" type="number" min="3" max="32" value="23" /></label>
+    <label>Rounds: <input id="rounds" type="number" min="1" value="4" /></label>
+    <label>Max Matches/Round: <input id="maxMatches" type="number" min="1" value="5" /></label>
   </div>
   <div>
-    <button onclick="generateSchedule()">Generate</button>
+    <button id="generateBtn">Generate</button>
     <button id="exportFull" class="export-btn">Export Full CSV</button>
     <button id="exportPDF" class="export-btn">Export Schedule as PDF</button>
   </div>
@@ -97,219 +45,396 @@ li {
 <div id="summary"></div>
 
 <script>
-let currentSchedule=[], currentPlayers=[], currentTeammates=[], currentOpponents=[], matchCount=[], sitOutCount=[];
+/* Utilities */
+function makePlayers(n){
+  const out=[];
+  for(let i=0;i<n;i++){
+    if(i<26) out.push(String.fromCharCode(65+i));
+    else out.push('A'+String.fromCharCode(65+(i-26)));
+  }
+  return out;
+}
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
 
-function makePlayers(n){ return Array.from({length:n},(_,i)=>String.fromCharCode(65+i)); }
+/* pick best split for a group of 4 into two teams (3 splits) */
+function sumTeammate(team, teammateCount, idx){ let s=0; if(team.length<2) return 0; const i=idx[team[0]], j=idx[team[1]]; return teammateCount[i][j]; }
+function sumOpp(teamA, teamB, opponentCount, idx){ let s=0; for(const a of teamA) for(const b of teamB) s+=opponentCount[idx[a]][idx[b]]; return s; }
+function bestSplit4(group4, teammateCount, opponentCount, idx){
+  const splits=[
+    [[group4[0],group4[1]],[group4[2],group4[3]]],
+    [[group4[0],group4[2]],[group4[1],group4[3]]],
+    [[group4[0],group4[3]],[group4[1],group4[2]]]
+  ];
+  let best=null, bestScore=Infinity;
+  for(const [t1,t2] of splits){
+    const score = sumTeammate(t1,teammateCount,idx)+sumTeammate(t2,teammateCount,idx)+sumOpp(t1,t2,opponentCount,idx);
+    if(score < bestScore){ bestScore=score; best={team1:t1.slice(), team2:t2.slice(), score}; }
+  }
+  return best;
+}
 
-function generateBalancedSchedule(nPlayers,nRounds,maxMatches){
-  const players=makePlayers(nPlayers);
-  const teammateCount=Array.from({length:nPlayers},()=>Array(nPlayers).fill(0));
-  const opponentCount=Array.from({length:nPlayers},()=>Array(nPlayers).fill(0));
-  const index=Object.fromEntries(players.map((p,i)=>[p,i]));
-  const rounds=[];
-  const sitOutsPerPlayer=Array(nPlayers).fill(0);
+/* simplest pick for 1v2 among candidates: choose triple minimizing teammate+opponent repetition */
+function bestTripleFor1v2(candidates, teammateCount, opponentCount, idx){
+  let best=null, bestScore=Infinity;
+  for(let i=0;i<candidates.length;i++){
+    for(let j=0;j<candidates.length;j++){ if(j===i) continue;
+      for(let k=0;k<candidates.length;k++){ if(k===i||k===j) continue;
+        const solo=candidates[i], pair=[candidates[j], candidates[k]];
+        const score = sumTeammate(pair,teammateCount,idx) + sumOpp([solo], pair, opponentCount, idx);
+        if(score < bestScore){ bestScore=score; best={solo, pair:pair.slice(), score}; }
+  } } }
+  return best;
+}
 
-  const capacityPerRound = maxMatches*4;
-  const totalCapacity = nRounds*capacityPerRound;
-  const totalRequiredSitOuts = Math.max(0, nPlayers*nRounds - totalCapacity);
-  const playersNeedingSitOut = totalRequiredSitOuts;
-  const sitOutAssignments = new Set();
+/* pick best pair for 1v1 (min opponent repeats) */
+function bestPairFor1v1(candidates, opponentCount, idx){
+  let best=null, bestScore=Infinity;
+  for(let i=0;i<candidates.length;i++){
+    for(let j=i+1;j<candidates.length;j++){
+      const a=candidates[i], b=candidates[j];
+      const score = opponentCount[idx[a]][idx[b]];
+      if(score < bestScore){ bestScore=score; best={a,b,score}; }
+    }
+  }
+  return best;
+}
+
+/* Main scheduler */
+function scheduleAll(nPlayers, nRounds, maxMatches){
+  const players = makePlayers(nPlayers);
+  const idx = Object.fromEntries(players.map((p,i)=>[p,i]));
+  const teammateCount = Array.from({length:nPlayers},()=>Array(nPlayers).fill(0));
+  const opponentCount = Array.from({length:nPlayers},()=>Array(nPlayers).fill(0));
+
+  const capacityPerRound = maxMatches * 4;
+  const perRoundSitOut = Math.max(0, nPlayers - capacityPerRound);
+  const totalSitOutSlots = perRoundSitOut * nRounds;
+
+  // If impossible to have each player sit out at most once, abort
+  if(totalSitOutSlots > nPlayers){
+    return { error: `Impossible: need ${totalSitOutSlots} distinct sit-out slots but only ${nPlayers} players. Increase rounds or max matches.` };
+  }
+
+  // assign distinct sit-outs: shuffle players and take first totalSitOutSlots
+  const shuffledPlayers = shuffle(players);
+  const sitOutList = shuffledPlayers.slice(0, totalSitOutSlots); // distinct players
+  // chunk into per-round buckets: exactly perRoundSitOut per round (if perRoundSitOut==0 then empty arrays)
+  const sitOutSchedule = [];
+  for(let r=0;r<nRounds;r++){
+    const start = r*perRoundSitOut;
+    const chunk = sitOutList.slice(start, start + perRoundSitOut);
+    sitOutSchedule.push(chunk.slice());
+  }
+
+  const rounds = [];
 
   for(let r=0;r<nRounds;r++){
-    let shuffled=[...players].sort(()=>Math.random()-0.5);
-    let matches=[];
-    let used=new Set();
+    // active players for this round = all players minus sitOutSchedule[r]
+    const sitouts = new Set(sitOutSchedule[r] || []);
+    const active = players.filter(p => !sitouts.has(p));
 
-    // Assign sit-outs fairly if needed
-    let thisRoundSitOuts=[];
-    if(playersNeedingSitOut>0){
-      const needThisRound = Math.ceil((nPlayers*nRounds - totalCapacity - rounds.length)/Math.max(1,(nRounds - rounds.length)));
-      for(let i=0;i<needThisRound && i<1;i++){ // never more than one per round
-        const candidates = shuffled.filter(p=>!sitOutAssignments.has(p));
-        if(candidates.length){
-          const sit = candidates[0];
-          sitOutAssignments.add(sit);
-          thisRoundSitOuts.push(sit);
-          used.add(sit);
-          sitOutsPerPlayer[index[sit]]++;
+    // Now form matches from active players using the mod-4 rules, preferring 2v2
+    const matches = [];
+    const pool = active.slice(); // we'll remove as we go
+
+    const remainder = pool.length % 4;
+
+    // handle leftovers first so remaining is multiple of 4
+    if(remainder === 1 && pool.length >= 5){
+      // pick best 5 candidates to make 1v2 + 1v1 (we'll try a small window)
+      const cand = pool.slice(0, Math.min(8, pool.length));
+      // brute force choose any 5 from cand
+      const choose = (arr, k) => {
+        const res=[]; const comb=(s,cur)=>{ if(cur.length===k){ res.push(cur.slice()); return; } for(let i=s;i<arr.length;i++){ cur.push(arr[i]); comb(i+1,cur); cur.pop(); } };
+        comb(0,[]); return res;
+      };
+      const combos = choose(cand, Math.min(5, cand.length));
+      let bestChoice=null, bestScore=Infinity;
+      for(const five of combos){
+        // try all partitions of five into (solo + pair) and remaining pair for 1v1
+        for(let i=0;i<5;i++){
+          for(let j=0;j<5;j++){ if(j===i) continue;
+            for(let k=0;k<5;k++){ if(k===i||k===j) continue;
+              const solo=five[i], pair=[five[j], five[k]];
+              const others = five.filter(x=>x!==solo && x!==pair[0] && x!==pair[1]);
+              if(others.length!==2) continue;
+              const [p1,p2] = others;
+              const score = sumTeammate(pair, teammateCount, idx) + sumOpp([solo], pair, opponentCount, idx) + opponentCount[idx[p1]][idx[p2]];
+              if(score < bestScore){ bestScore=score; bestChoice={solo,pair:[...pair],p1,p2,five}; }
+  } } }
+      }
+      let chosenFive;
+      if(bestChoice){
+        chosenFive = [bestChoice.solo, ...bestChoice.pair, bestChoice.p1, bestChoice.p2];
+      } else {
+        chosenFive = pool.slice(0,5);
+      }
+      // remove chosenFive from pool
+      for(const p of chosenFive){
+        const pos = pool.indexOf(p); if(pos!==-1) pool.splice(pos,1);
+      }
+      // add matches: 1v2 then 1v1
+      matches.push({ team1: [chosenFive[0]], team2: [chosenFive[1], chosenFive[2]], type: '1v2' });
+      matches.push({ team1: [chosenFive[3]], team2: [chosenFive[4]], type: '1v1' });
+    } else if(remainder === 2 && pool.length >= 2){
+      // pick best 1v1 from first candidates
+      const cand = pool.slice(0, Math.min(8, pool.length));
+      const best = bestPairFor1v1(cand, opponentCount, idx) || {a:pool[0], b:pool[1]};
+      // remove them
+      [best.a, best.b].forEach(p => { const pos = pool.indexOf(p); if(pos!==-1) pool.splice(pos,1); });
+      matches.push({ team1: [best.a], team2: [best.b], type: '1v1' });
+    } else if(remainder === 3 && pool.length >= 3){
+      const cand = pool.slice(0, Math.min(8, pool.length));
+      const best = bestTripleFor1v2(cand, teammateCount, opponentCount, idx);
+      if(best){
+        [best.solo, ...best.pair].forEach(p => { const pos = pool.indexOf(p); if(pos!==-1) pool.splice(pos,1); });
+        matches.push({ team1: [best.solo], team2: best.pair.slice(), type: '1v2' });
+      } else {
+        const triple = pool.splice(0,3);
+        matches.push({ team1: [triple[0]], team2: [triple[1], triple[2]], type: '1v2' });
+      }
+    }
+    // Now pool.length is multiple of 4 (or less than 4). Form 2v2 groups, up to maxMatches
+    let matchCount = matches.length;
+    while(pool.length >= 4 && matchCount < maxMatches){
+      // select best group of 4 among first K candidates
+      const K = Math.min(10, pool.length);
+      const cand = pool.slice(0, K);
+      let bestGroup=null, bestScore=Infinity, bestPick=null;
+      // enumerate combos of 4 in cand
+      for(let a=0;a<cand.length;a++){
+        for(let b=a+1;b<cand.length;b++){
+          for(let c=b+1;c<cand.length;c++){
+            for(let d=c+1;d<cand.length;d++){
+              const group4=[cand[a],cand[b],cand[c],cand[d]];
+              const pick = bestSplit4(group4, teammateCount, opponentCount, idx);
+              if(pick.score < bestScore){ bestScore=pick.score; bestGroup=group4.slice(); bestPick=pick; }
+      } } }
+      }
+      if(!bestGroup){ // fallback
+        const group4 = pool.splice(0,4);
+        const pick = bestSplit4(group4, teammateCount, opponentCount, idx);
+        matches.push({ team1: pick.team1.slice(), team2: pick.team2.slice(), type: '2v2' });
+      } else {
+        // remove bestGroup members from pool
+        for(const p of bestGroup){ const pos=pool.indexOf(p); if(pos!==-1) pool.splice(pos,1); }
+        matches.push({ team1: bestPick.team1.slice(), team2: bestPick.team2.slice(), type: '2v2' });
+      }
+      matchCount++;
+    }
+
+    // if any leftover players remain in pool (<4) they must be included somehow; this can only happen when pool.length <4 and we can't form more matches.
+    // We'll treat remaining players as small matches: if 3 -> 1v2, if 2 -> 1v1, if 1 -> forced 1v2 with someone? but this shouldn't happen because active size = capacityPerRound or less.
+    while(pool.length > 0){
+      if(pool.length === 3){ const triple = pool.splice(0,3); matches.push({team1:[triple[0]], team2:[triple[1],triple[2]], type:'1v2'}); }
+      else if(pool.length === 2){ const pair = pool.splice(0,2); matches.push({team1:[pair[0]], team2:[pair[1]], type:'1v1'}); }
+      else if(pool.length === 1){
+        // If a single remains, try to merge into an earlier 1v1 to create a 1v2; otherwise pair with last match's team (rare)
+        const solo = pool.shift();
+        // try to find an existing 1v1 and convert it to 1v2
+        let converted=false;
+        for(const m of matches){
+          if(m.type==='1v1'){
+            // convert that 1v1 into a 1v2: make existing team1 solo vs team2 pair with solo added to pair
+            const existingSolo = m.team1[0];
+            const existingOpp = m.team2[0];
+            // replace m with new 1v2: existingSolo vs [existingOpp, solo]
+            m.team1 = [existingSolo];
+            m.team2 = [existingOpp, solo];
+            m.type = '1v2';
+            converted=true;
+            break;
+          }
+        }
+        if(!converted){
+          // fallback: create a dummy 1v2 with previously used player (should be rare)
+          // pick first match's first team member to pair
+          if(matches.length>0){
+            const target = matches[0].team1[0];
+            // replace matches[0] to include solo in its opponent/pair if possible
+            if(matches[0].type==='2v2'){
+              // convert one side to be 1v2: take one member from team2 and pair with solo
+              const taken = matches[0].team2.pop();
+              matches.push({ team1:[target], team2:[taken, solo], type:'1v2' });
+              // update original 2v2 to be 1v1
+              matches[0].team2 = [matches[0].team2[0]];
+              matches[0].type = '1v1';
+            } else {
+              // as last resort, make a 1v1 with solo and first member found
+              const someone = matches[0].team1[0] || matches[0].team2[0];
+              matches.push({ team1:[solo], team2:[someone], type:'1v1' });
+            }
+          } else {
+            // no matches at all — shouldn't happen — create single 1v1 with placeholder
+            matches.push({ team1:[solo], team2:['?'], type:'1v1' });
+          }
         }
       }
     }
 
-    let active=shuffled.filter(p=>!used.has(p));
-
-    let remainder = active.length % 4;
-    if(remainder===1 && active.length>=5){
-      let subset=active.splice(0,5);
-      matches.push({team1:[subset[0]],team2:[subset[1],subset[2]],is1v2:true});
-      matches.push({team1:[subset[3]],team2:[subset[4]],is1v1:true});
-    } else if(remainder===2 && active.length>=2){
-      let subset=active.splice(0,2);
-      matches.push({team1:[subset[0]],team2:[subset[1]],is1v1:true});
-    } else if(remainder===3 && active.length>=3){
-      let subset=active.splice(0,3);
-      matches.push({team1:[subset[0]],team2:[subset[1],subset[2]],is1v2:true});
-    }
-
-    let matchCount=matches.length;
-    while(active.length>=4 && matchCount<maxMatches){
-      let group=active.splice(0,4);
-      matches.push({team1:[group[0],group[1]],team2:[group[2],group[3]]});
-      matchCount++;
-    }
-
-    rounds.push({matches,sitouts:thisRoundSitOuts});
-
-    // Update matrices
-    matches.forEach(m=>{
-      if(m.is1v1){
-        const [a]=m.team1,[b]=m.team2;
-        opponentCount[index[a]][index[b]]++;
-        opponentCount[index[b]][index[a]]++;
-      } else if(m.is1v2){
-        const a=m.team1[0], [b,c]=m.team2;
-        opponentCount[index[a]][index[b]]++;
-        opponentCount[index[a]][index[c]]++;
-        opponentCount[index[b]][index[a]]++;
-        opponentCount[index[c]][index[a]]++;
-        teammateCount[index[b]][index[c]]++;
-        teammateCount[index[c]][index[b]]++;
-      } else {
-        const [a,b]=m.team1,[c,d]=m.team2;
-        teammateCount[index[a]][index[b]]++;
-        teammateCount[index[b]][index[a]]++;
-        teammateCount[index[c]][index[d]]++;
-        teammateCount[index[d]][index[c]]++;
+    // update matrices for this round
+    for(const m of matches){
+      if(m.type === '2v2'){
+        const a=m.team1[0], b=m.team1[1], c=m.team2[0], d=m.team2[1];
+        teammateCount[idx[a]][idx[b]]++; teammateCount[idx[b]][idx[a]]++;
+        teammateCount[idx[c]][idx[d]]++; teammateCount[idx[d]][idx[c]]++;
         [a,b].forEach(p1=>[c,d].forEach(p2=>{
-          opponentCount[index[p1]][index[p2]]++;
-          opponentCount[index[p2]][index[p1]]++;
+          opponentCount[idx[p1]][idx[p2]]++; opponentCount[idx[p2]][idx[p1]]++;
         }));
+      } else if(m.type === '1v2'){
+        const solo=m.team1[0], [p1,p2]=m.team2;
+        teammateCount[idx[p1]][idx[p2]]++; teammateCount[idx[p2]][idx[p1]]++;
+        opponentCount[idx[solo]][idx[p1]]++; opponentCount[idx[p1]][idx[solo]]++;
+        opponentCount[idx[solo]][idx[p2]]++; opponentCount[idx[p2]][idx[solo]]++;
+      } else if(m.type === '1v1'){
+        const a=m.team1[0], b=m.team2[0];
+        opponentCount[idx[a]][idx[b]]++; opponentCount[idx[b]][idx[a]]++;
       }
-    });
+    }
+
+    rounds.push({ matches, sitouts: sitOutSchedule[r] || [] });
   }
 
-  return {rounds,teammates:teammateCount,opponents:opponentCount,sitOuts:sitOutsPerPlayer};
+  return { rounds, teammates: teammateCount, opponents: opponentCount, players };
 }
 
-function generateSchedule(){
-  const nPlayers=parseInt(document.getElementById('players').value);
-  const nRounds=parseInt(document.getElementById('rounds').value);
-  const maxMatches=parseInt(document.getElementById('maxMatches').value);
-  if(nPlayers<3||nPlayers>32){alert('Players must be 3–32');return;}
-  currentPlayers=makePlayers(nPlayers);
-  const result=generateBalancedSchedule(nPlayers,nRounds,maxMatches);
-  currentSchedule=result.rounds;
-  currentTeammates=result.teammates;
-  currentOpponents=result.opponents;
-  sitOutCount=result.sitOuts;
-  renderSchedule();
-  renderFairnessSummary();
-  document.getElementById('exportFull').style.display='inline-block';
-  document.getElementById('exportPDF').style.display='inline-block';
-}
+/* UI wiring and exports */
+let current = { rounds:[], teammates:[], opponents:[], players:[] };
+const generateBtn = document.getElementById('generateBtn');
+const exportFullBtn = document.getElementById('exportFull');
+const exportPdfBtn = document.getElementById('exportPDF');
 
-function renderSchedule(){
-  const container=document.getElementById('schedule');
-  container.innerHTML='';
-  currentSchedule.forEach((round,i)=>{
-    const div=document.createElement('div');
-    div.className='round';
-    div.innerHTML=`<h2>Round ${i+1}</h2>`;
-    const ul=document.createElement('ul');
-    round.matches.forEach(m=>{
-      let li=document.createElement('li');
-      if(m.is1v1) li.textContent=`${m.team1[0]} vs ${m.team2[0]}`;
-      else if(m.is1v2) li.textContent=`${m.team1[0]} vs ${m.team2.join(' + ')}`;
-      else li.textContent=`${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+generateBtn.addEventListener('click', ()=> {
+  const nPlayers = parseInt(document.getElementById('players').value);
+  const nRounds = parseInt(document.getElementById('rounds').value);
+  const maxMatches = parseInt(document.getElementById('maxMatches').value);
+  if(isNaN(nPlayers)||nPlayers<3||nPlayers>32){ alert('Players must be between 3 and 32'); return; }
+  if(isNaN(nRounds)||nRounds<1){ alert('Rounds must be at least 1'); return; }
+  if(isNaN(maxMatches)||maxMatches<1){ alert('Max matches per round must be at least 1'); return; }
+
+  const capacityPerRound = maxMatches*4;
+  const perRoundSitOut = Math.max(0, nPlayers - capacityPerRound);
+  const totalSitOutSlots = perRoundSitOut * nRounds;
+  if(totalSitOutSlots > nPlayers){
+    alert(`Impossible to have each sit-out be unique. per-round sit-outs = ${perRoundSitOut}, total sit-out slots = ${totalSitOutSlots}, players = ${nPlayers}. Increase rounds or max matches.`);
+    return;
+  }
+
+  const result = scheduleAll(nPlayers, nRounds, maxMatches);
+  if(result.error){
+    alert(result.error); return;
+  }
+  current = result;
+  renderAll();
+  exportFullBtn.style.display='inline-block';
+  exportPdfBtn.style.display='inline-block';
+});
+
+function renderAll(){
+  const scheduleDiv = document.getElementById('schedule');
+  scheduleDiv.innerHTML = '';
+  current.rounds.forEach((rObj, idx) => {
+    const d = document.createElement('div'); d.className='round';
+    d.innerHTML = `<h2>Round ${idx+1}</h2>`;
+    const ul = document.createElement('ul');
+    // matches first
+    for(const m of rObj.matches){
+      const li = document.createElement('li');
+      if(m.type==='2v2') li.textContent = `${m.team1.join(' + ')} vs ${m.team2.join(' + ')}`;
+      else if(m.type==='1v2') li.textContent = `${m.team1[0]} vs ${m.team2.join(' + ')}`;
+      else li.textContent = `${m.team1[0]} vs ${m.team2[0]}`;
       ul.appendChild(li);
-    });
-    round.sitouts.forEach(p=>{
-      let li=document.createElement('li');
-      li.textContent=`Sit-out: ${p}`;
-      ul.appendChild(li);
-    });
-    div.appendChild(ul);
-    container.appendChild(div);
+    }
+    // then sitouts
+    for(const s of (rObj.sitouts||[])){
+      const li = document.createElement('li'); li.textContent = `Sit-out: ${s}`; ul.appendChild(li);
+    }
+    d.appendChild(ul); scheduleDiv.appendChild(d);
   });
+
+  // fairness summary
+  const summaryDiv = document.getElementById('summary');
+  const players = current.players;
+  // compute matches played & sat out
+  const played = players.map(p=>{
+    let cnt=0;
+    for(const rObj of current.rounds){
+      if(rObj.sitouts && rObj.sitouts.includes(p)) continue;
+      for(const m of rObj.matches){
+        if(m.type==='2v2' && (m.team1.includes(p) || m.team2.includes(p))) { cnt++; break; }
+        if(m.type==='1v2' && (m.team1.includes(p) || m.team2.includes(p))) { cnt++; break; }
+        if(m.type==='1v1' && (m.team1.includes(p) || m.team2.includes(p))) { cnt++; break; }
+      }
+    }
+    return cnt;
+  });
+  const sat = players.map(p => current.rounds.filter(r=>r.sitouts && r.sitouts.includes(p)).length);
+  let html = '<div id="summary"><h2>Fairness Summary</h2><table><tr><th>Player</th><th>Matches Played</th><th>Times Sat Out</th></tr>';
+  for(let i=0;i<players.length;i++) html += `<tr><td>${players[i]}</td><td>${played[i]}</td><td>${sat[i]}</td></tr>`;
+  html += '</table></div>';
+  summaryDiv.innerHTML = html;
 }
 
-function renderFairnessSummary(){
-  const summaryDiv=document.getElementById('summary');
-  matchCount=currentPlayers.map(p=>{
-    let played=0;
-    currentSchedule.forEach(round=>{
-      if(round.sitouts.includes(p))return;
-      round.matches.forEach(m=>{
-        if((m.is1v1 && (m.team1.includes(p)||m.team2.includes(p)))||
-           (m.is1v2 && (m.team1.includes(p)||m.team2.includes(p)))||
-           ((!m.is1v1&&!m.is1v2)&&(m.team1.includes(p)||m.team2.includes(p))))
-           played++;
-      });
+exportFullBtn.addEventListener('click', ()=>{
+  if(!current.rounds.length) return;
+  let csv = '=== Match Schedule ===\nRound,Match,Team 1,Team 2\n';
+  current.rounds.forEach((rObj, ri)=>{
+    rObj.matches.forEach((m,mi)=>{
+      if(m.type==='2v2') csv += `${ri+1},${mi+1},${m.team1.join(' + ')},${m.team2.join(' + ')}\n`;
+      else if(m.type==='1v2') csv += `${ri+1},${mi+1},${m.team1[0]},${m.team2.join(' + ')}\n`;
+      else csv += `${ri+1},${mi+1},${m.team1[0]},${m.team2[0]}\n`;
     });
-    return played;
+    (rObj.sitouts||[]).forEach(s => csv += `${ri+1},,Sit-out: ${s},\n`);
   });
 
-  let html='<h2>Fairness Summary</h2><table><tr><th>Player</th><th>Matches Played</th><th>Times Sat Out</th></tr>';
-  currentPlayers.forEach((p,i)=>{
-    html+=`<tr><td>${p}</td><td>${matchCount[i]}</td><td>${sitOutCount[i]}</td></tr>`;
+  // Player match count & sit-out
+  csv += '\n=== Player Match Count ===\nPlayer,Matches Played,Matches Sat Out\n';
+  const players = current.players;
+  const played = players.map(p=>{
+    let cnt=0;
+    for(const rObj of current.rounds){
+      if(rObj.sitouts && rObj.sitouts.includes(p)) continue;
+      for(const m of rObj.matches){
+        if((m.type==='2v2' || m.type==='1v2' || m.type==='1v1') && (m.team1.includes(p) || (m.team2 && m.team2.includes && m.team2.includes(p)))) { cnt++; break; }
+      }
+    }
+    return cnt;
   });
-  html+='</table>';
-  summaryDiv.innerHTML=html;
-}
+  players.forEach((p,i)=> csv += `${p},${played[i]},${current.rounds.filter(r=>r.sitouts && r.sitouts.includes(p)).length}\n`);
 
-function exportFullCSV(){
-  if(!currentSchedule.length)return;
-  let csv='=== Match Schedule ===\nRound,Match,Team 1,Team 2\n';
-  currentSchedule.forEach((round,i)=>{
-    round.matches.forEach((m,j)=>{
-      if(m.is1v1) csv+=`${i+1},${j+1},${m.team1[0]},${m.team2[0]}\n`;
-      else if(m.is1v2) csv+=`${i+1},${j+1},${m.team1[0]},${m.team2.join(' + ')}\n`;
-      else csv+=`${i+1},${j+1},${m.team1.join(' + ')},${m.team2.join(' + ')}\n`;
-    });
-    round.sitouts.forEach(p=>{
-      csv+=`${i+1},,Sit-out: ${p},\n`;
-    });
-  });
+  // matrices
+  csv += '\n=== Teammate Matrix ===\n,' + players.join(',') + '\n';
+  current.teammates.forEach((row,i)=> csv += players[i] + ',' + row.join(',') + '\n');
+  csv += '\n=== Opponent Matrix ===\n,' + players.join(',') + '\n';
+  current.opponents.forEach((row,i)=> csv += players[i] + ',' + row.join(',') + '\n');
 
-  csv+='\n=== Player Match Count ===\nPlayer,Matches Played,Matches Sat Out\n';
-  currentPlayers.forEach((p,i)=>{
-    csv+=`${p},${matchCount[i]},${sitOutCount[i]}\n`;
-  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'round_robin_schedule.csv'; a.click();
+});
 
-  csv+='\n=== Teammate Matrix ===\n,'+currentPlayers.join(',')+'\n';
-  currentTeammates.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
-  csv+='\n=== Opponent Matrix ===\n,'+currentPlayers.join(',')+'\n';
-  currentOpponents.forEach((row,i)=>csv+=currentPlayers[i]+','+row.join(',')+'\n');
-
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='round_robin_schedule.csv';
-  a.click();
-}
-
-function exportSchedulePDF(){
-  if(!currentSchedule.length)return;
-  const w=window.open('','', 'width=800,height=600');
-  w.document.write('<html><head><title>Round Robin Schedule</title><style>body{font-family:Arial;}h2{margin-top:20px;}li{margin:4px 0;}</style></head><body>');
-  currentSchedule.forEach((round,i)=>{
+exportPdfBtn.addEventListener('click', ()=>{
+  if(!current.rounds.length) return;
+  const w = window.open('','', 'width=800,height=600');
+  w.document.write('<html><head><title>Round Robin Schedule</title><style>body{font-family:Arial;padding:20px;}h2{margin-top:20px;}ul{list-style:none;padding:0;}li{margin:6px 0;padding:6px;border-radius:4px;background:#f1f5f9;font-family:monospace;}</style></head><body>');
+  current.rounds.forEach((rObj, i)=>{
     w.document.write(`<h2>Round ${i+1}</h2><ul>`);
-    round.matches.forEach(m=>{
-      if(m.is1v1) w.document.write(`<li>${m.team1[0]} vs ${m.team2[0]}</li>`);
-      else if(m.is1v2) w.document.write(`<li>${m.team1[0]} vs ${m.team2.join(' + ')}</li>`);
-      else w.document.write(`<li>${m.team1.join(' + ')} vs ${m.team2.join(' + ')}</li>`);
+    rObj.matches.forEach(m=>{
+      if(m.type==='2v2') w.document.write(`<li>${m.team1.join(' + ')} vs ${m.team2.join(' + ')}</li>`);
+      else if(m.type==='1v2') w.document.write(`<li>${m.team1[0]} vs ${m.team2.join(' + ')}</li>`);
+      else w.document.write(`<li>${m.team1[0]} vs ${m.team2[0]}</li>`);
     });
-    round.sitouts.forEach(p=>{
-      w.document.write(`<li>Sit-out: ${p}</li>`);
-    });
+    (rObj.sitouts||[]).forEach(s => w.document.write(`<li>Sit-out: ${s}</li>`));
     w.document.write('</ul>');
   });
-  w.document.write('</body></html>');
-  w.document.close(); w.print(); w.close();
-}
-
-document.getElementById('exportFull').addEventListener('click',exportFullCSV);
-document.getElementById('exportPDF').addEventListener('click',exportSchedulePDF);
+  w.document.write('</body></html>'); w.document.close(); w.print(); w.close();
+});
 </script>
 </body>
 </html>
