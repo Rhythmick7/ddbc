@@ -13,116 +13,232 @@ function makePlayers(n) {
   return names;
 }
 
+// Replace your existing buildSchedule(...) with this function
 function buildSchedule(nPlayers, nRounds, maxMatches) {
   const players = makePlayers(nPlayers);
-  const idx = Object.fromEntries(players.map((p, i) => [p, i]));
-  const teammates = Array.from({ length: nPlayers }, () => Array(nPlayers).fill(0));
-  const opponents = Array.from({ length: nPlayers }, () => Array(nPlayers).fill(0));
+  const idx = Object.fromEntries(players.map((p,i)=>[p,i]));
+  const teammates = Array.from({length:nPlayers},()=>Array(nPlayers).fill(0));
+  const opponents = Array.from({length:nPlayers},()=>Array(nPlayers).fill(0));
 
-  const specialCount = Object.fromEntries(players.map(p => [p, 0]));
-  const soloCount = Object.fromEntries(players.map(p => [p, 0]));
-  const matchesPlayed = Object.fromEntries(players.map(p => [p, 0]));
-  const sitOuts = Object.fromEntries(players.map(p => [p, 0]));
-  const count2v2 = Object.fromEntries(players.map(p => [p, 0]));
-  const count1v1 = Object.fromEntries(players.map(p => [p, 0]));
-  const count1v2 = Object.fromEntries(players.map(p => [p, 0]));
+  // stats
+  const specialCount = Object.fromEntries(players.map(p=>[p,0])); // how many times in 1v1/1v2
+  const soloCount = Object.fromEntries(players.map(p=>[p,0]));
+  const matchesPlayed = Object.fromEntries(players.map(p=>[p,0]));
+  const sitOuts = Object.fromEntries(players.map(p=>[p,0]));
+  const count2v2 = Object.fromEntries(players.map(p=>[p,0]));
+  const count1v1 = Object.fromEntries(players.map(p=>[p,0]));
+  const count1v2 = Object.fromEntries(players.map(p=>[p,0]));
 
+  // capacity & sit-outs (distinct across rounds)
   const capacityPerRound = maxMatches * 4;
   const perRoundSit = Math.max(0, nPlayers - capacityPerRound);
   const totalSitSlots = perRoundSit * nRounds;
-  const allPlayersShuffled = shuffle(players);
-  const sitOutList = allPlayersShuffled.slice(0, totalSitSlots);
+  if (totalSitSlots > nPlayers) return { error: `Impossible: need ${totalSitSlots} distinct sit-outs but only ${nPlayers} players.` };
+
+  // build sit-out schedule (distinct players)
+  const shuffledAll = shuffle(players);
+  const sitOutList = shuffledAll.slice(0, totalSitSlots);
   const sitOutSchedule = [];
-  for (let r = 0; r < nRounds; r++) {
-    const start = r * perRoundSit;
-    sitOutSchedule.push(sitOutList.slice(start, start + perRoundSit));
+  for (let r=0;r<nRounds;r++){
+    const start = r*perRoundSit;
+    sitOutSchedule.push(sitOutList.slice(start, start+perRoundSit));
   }
 
+  // compute specialSlotsPerRound
+  const specialSlotsPerRound = [];
+  let totalSpecialSlots = 0;
+  for (let r=0;r<nRounds;r++){
+    const sitOutThis = new Set(sitOutSchedule[r]||[]);
+    const active = players.filter(p=>!sitOutThis.has(p));
+    const mod = active.length % 4;
+    let slots = 0;
+    if (mod===1 && active.length>=5) slots = 5;
+    else if (mod===2 && active.length>=2) slots = 2;
+    else if (mod===3 && active.length>=3) slots = 3;
+    specialSlotsPerRound.push(slots);
+    totalSpecialSlots += slots;
+  }
+
+  // We'll assign special slots round-by-round picking players with lowest specialCount
+  // but ensuring each round's special players are distinct within that round and are active
+  const specialAssignedPerRound = Array.from({length:nRounds}, ()=>[]);
+
+  // To avoid bias we will keep a rotating start order each round (shuffle once)
+  const baseOrder = shuffle(players);
+
+  for (let r=0;r<nRounds;r++){
+    const need = specialSlotsPerRound[r];
+    if (need === 0) continue;
+    const sitOutThis = new Set(sitOutSchedule[r]||[]);
+    const active = players.filter(p=>!sitOutThis.has(p));
+    // build candidates sorted by (specialCount, matchesPlayed, random tie-break)
+    const candidates = active.slice().map(p => ({p, sc:specialCount[p], mp:matchesPlayed[p], rand: Math.random()}))
+      .sort((A,B)=> A.sc - B.sc || A.mp - B.mp || A.rand - B.rand)
+      .map(o=>o.p);
+    // pick first 'need' distinct players
+    const chosen=[];
+    for (let i=0;i<candidates.length && chosen.length<need;i++){
+      const c = candidates[i];
+      if (!chosen.includes(c)) chosen.push(c);
+    }
+    // If not enough candidates (edge case), fill from active players not yet chosen
+    if (chosen.length < need){
+      for (const p of active){
+        if (chosen.length>=need) break;
+        if (!chosen.includes(p)) chosen.push(p);
+      }
+    }
+    specialAssignedPerRound[r] = chosen.slice(0, need);
+    // increment specialCount tentatively; actual specials will be consumed when building matches
+    for (const p of specialAssignedPerRound[r]) specialCount[p]++; // this ensures later rounds pick others first
+  }
+
+  // After preassigning specials, build rounds using those sets
   const rounds = [];
-  for (let r = 0; r < nRounds; r++) {
-    const sitOutThis = new Set(sitOutSchedule[r] || []);
-    const active = players.filter(p => !sitOutThis.has(p));
+
+  for (let r=0;r<nRounds;r++){
+    const sitOutThis = new Set(sitOutSchedule[r]||[]);
+    let active = players.filter(p=>!sitOutThis.has(p));
+    // pool = players available to allocate to matches this round (we will remove as used)
     let pool = shuffle(active);
     const matches = [];
 
-    const mod = pool.length % 4;
-    const removeFromPool = (list) => { for (const p of list) pool = pool.filter(x => x !== p); };
-    const pickPlayers = (num, exclude = []) => {
-      const eligible = pool.filter(p => !exclude.includes(p))
-        .sort((a, b) => specialCount[a] - specialCount[b] || matchesPlayed[a] - matchesPlayed[b]);
-      return eligible.slice(0, num);
-    };
+    // get the special set for this round (preassigned) - ensure they are active and unique
+    let specialSet = (specialAssignedPerRound[r] || []).filter(p => active.includes(p));
+    specialSet = Array.from(new Set(specialSet));
 
-    if (mod === 1 && pool.length >= 5) {
-      const oneV2Players = pickPlayers(3);
-      const [solo, ...pair] = oneV2Players.sort((a, b) => soloCount[a] - soloCount[b]);
-      matches.push({ type: "1v2", team1: [solo], team2: pair });
-      removeFromPool(oneV2Players);
-      [solo, ...pair].forEach(p => specialCount[p]++);
-      soloCount[solo]++; count1v2[solo]++; pair.forEach(p => count1v2[p]++);
+    // remove specialSet from pool
+    pool = pool.filter(p => !specialSet.includes(p));
 
-      const oneV1Players = pickPlayers(2);
-      matches.push({ type: "1v1", team1: [oneV1Players[0]], team2: [oneV1Players[1]] });
-      removeFromPool(oneV1Players);
-      oneV1Players.forEach(p => { specialCount[p]++; soloCount[p]++; count1v1[p]++; });
-    }
-    else if (mod === 2 && pool.length >= 2) {
-      const oneV1Players = pickPlayers(2);
-      matches.push({ type: "1v1", team1: [oneV1Players[0]], team2: [oneV1Players[1]] });
-      removeFromPool(oneV1Players);
-      oneV1Players.forEach(p => { specialCount[p]++; soloCount[p]++; count1v1[p]++; });
-    }
-    else if (mod === 3 && pool.length >= 3) {
-      const oneV2Players = pickPlayers(3);
-      const [solo, ...pair] = oneV2Players.sort((a, b) => soloCount[a] - soloCount[b]);
-      matches.push({ type: "1v2", team1: [solo], team2: pair });
-      removeFromPool(oneV2Players);
-      [solo, ...pair].forEach(p => specialCount[p]++);
-      soloCount[solo]++; count1v2[solo]++; pair.forEach(p => count1v2[p]++);
+    // Build special matches exactly from specialSet according to the needed pattern
+    const slots = specialSlotsPerRound[r];
+    if (slots === 5) {
+      // 1x1v2 (3 players) + 1x1v1 (2 players)
+      // We must pick solo for 1v2 from specialSet (lowest soloCount), then remaining pair and remaining two form 1v1
+      if (specialSet.length < 5) {
+        // should not occur if preassignment worked, but fallback: take from pool if needed
+        while (specialSet.length < 5 && pool.length>0) specialSet.push(pool.shift());
+      }
+      // choose solo by lowest soloCount then lowest specialCount
+      specialSet.sort((a,b)=> soloCount[a] - soloCount[b] || specialCount[a] - specialCount[b] || Math.random()-0.5);
+      const solo = specialSet.shift();
+      const pair = [specialSet.shift(), specialSet.shift()];
+      const onev1pair = [specialSet.shift(), specialSet.shift()];
+      matches.push({type:'1v2', team1:[solo], team2:pair});
+      matches.push({type:'1v1', team1:[onev1pair[0]], team2:[onev1pair[1]]});
+      // update counts
+      soloCount[solo]++; specialCount[solo]++; specialCount[pair[0]]++; specialCount[pair[1]]++;
+      specialCount[onev1pair[0]]++; specialCount[onev1pair[1]]++;
+      count1v2[solo]++; count1v2[pair[0]]++; count1v2[pair[1]]++;
+      count1v1[onev1pair[0]]++; count1v1[onev1pair[1]]++;
+    } else if (slots === 3) {
+      // single 1v2 from specialSet
+      if (specialSet.length < 3) while (specialSet.length < 3 && pool.length>0) specialSet.push(pool.shift());
+      specialSet.sort((a,b)=> soloCount[a] - soloCount[b] || specialCount[a] - specialCount[b] || Math.random()-0.5);
+      const solo = specialSet.shift();
+      const pair = [specialSet.shift(), specialSet.shift()];
+      matches.push({type:'1v2', team1:[solo], team2:pair});
+      soloCount[solo]++; specialCount[solo]++; specialCount[pair[0]]++; specialCount[pair[1]]++;
+      count1v2[solo]++; count1v2[pair[0]]++; count1v2[pair[1]]++;
+    } else if (slots === 2) {
+      // single 1v1 from specialSet
+      if (specialSet.length < 2) while (specialSet.length < 2 && pool.length>0) specialSet.push(pool.shift());
+      const [a,b] = specialSet.slice(0,2);
+      matches.push({type:'1v1', team1:[a], team2:[b]});
+      specialCount[a]++; specialCount[b]++; soloCount[a]++; soloCount[b]++;
+      count1v1[a]++; count1v1[b]++;
     }
 
+    // Now fill remaining matches up to maxMatches with 2v2 using pool
+    // We choose groups of 4 that minimize repeats by brute-forcing small candidate window
     while (pool.length >= 4 && matches.length < maxMatches) {
-      const group = pickPlayers(4);
-      const [a, b, c, d] = group;
-      matches.push({ type: "2v2", team1: [a, b], team2: [c, d] });
-      removeFromPool(group);
-      [a, b, c, d].forEach(p => count2v2[p]++);
+      const K = Math.min(10, pool.length);
+      const cand = pool.slice(0, K);
+      let bestGroup = null, bestScore = Infinity, bestPickIdx = null;
+      // enumerate combos of 4 from cand
+      for (let a=0;a<cand.length;a++){
+        for (let b=a+1;b<cand.length;b++){
+          for (let c=b+1;c<cand.length;c++){
+            for (let d=c+1;d<cand.length;d++){
+              const group = [cand[a], cand[b], cand[c], cand[d]];
+              // consider the three splits
+              const splits = [
+                [[group[0],group[1]],[group[2],group[3]]],
+                [[group[0],group[2]],[group[1],group[3]]],
+                [[group[0],group[3]],[group[1],group[2]]]
+              ];
+              for (const [t1,t2] of splits){
+                // score = teammate repeats + opponent repeats
+                let s = 0;
+                if (t1.length===2) s += teammates[idx[t1[0]]][idx[t1[1]]];
+                if (t2.length===2) s += teammates[idx[t2[0]]][idx[t2[1]]];
+                s += opponentPenalty(t1,t2,opponents,idx);
+                if (s < bestScore) { bestScore = s; bestGroup = {team1:t1.slice(), team2:t2.slice()}; bestPickIdx=[a,b,c,d]; }
+              }
+            }
+          }
+        }
+      }
+      // remove chosen group from pool
+      if (bestPickIdx){
+        const picked = [cand[bestPickIdx[0]], cand[bestPickIdx[1]], cand[bestPickIdx[2]], cand[bestPickIdx[3]]];
+        pool = pool.filter(p => !picked.includes(p));
+        matches.push({ type:'2v2', team1: bestGroup.team1, team2: bestGroup.team2 });
+        bestGroup.team1.concat(bestGroup.team2).forEach(p => count2v2[p]++);
+      } else {
+        // fallback
+        const g = pool.splice(0,4);
+        matches.push({ type:'2v2', team1:[g[0],g[1]], team2:[g[2],g[3]] });
+        [g[0],g[1],g[2],g[3]].forEach(p => count2v2[p]++);
+      }
     }
 
+    // If any pool players remain (shouldn't occur if sit-outs computed correctly), treat them as sit-outs
     if (pool.length > 0) {
-      pool.forEach(p => { sitOutThis.add(p); sitOuts[p]++; });
+      for (const p of pool) sitOuts[p]++;
       pool = [];
     }
 
-    for (const m of matches) {
-      if (m.type === "2v2") {
-        const [a, b] = m.team1, [c, d] = m.team2;
+    // Update global matrices & matchesPlayed for this round's matches
+    for (const m of matches){
+      if (m.type === '2v2'){
+        const [a,b]=m.team1, [c,d]=m.team2;
         teammates[idx[a]][idx[b]]++; teammates[idx[b]][idx[a]]++;
         teammates[idx[c]][idx[d]]++; teammates[idx[d]][idx[c]]++;
-        [a, b].forEach(x => {
-        [c, d].forEach(y => {
-            opponents[idx[x]][idx[y]]++;
-            opponents[idx[y]][idx[x]]++;
-        });
-});
-        [a, b, c, d].forEach(p => matchesPlayed[p]++);
-      } else if (m.type === "1v2") {
-        const solo = m.team1[0], [x, y] = m.team2;
+        [a,b].forEach(x=>[c,d].forEach(y=>{
+          opponents[idx[x]][idx[y]]++; opponents[idx[y]][idx[x]]++;
+        }));
+        matchesPlayed[a]++; matchesPlayed[b]++; matchesPlayed[c]++; matchesPlayed[d]++;
+      } else if (m.type === '1v2'){
+        const solo = m.team1[0], [x,y]=m.team2;
         teammates[idx[x]][idx[y]]++; teammates[idx[y]][idx[x]]++;
-        [x, y].forEach(t => { opponents[idx[solo]][idx[t]]++; opponents[idx[t]][idx[solo]]++; });
-        [solo, x, y].forEach(p => matchesPlayed[p]++);
-      } else if (m.type === "1v1") {
+        opponents[idx[solo]][idx[x]]++; opponents[idx[x]][idx[solo]]++;
+        opponents[idx[solo]][idx[y]]++; opponents[idx[y]][idx[solo]]++;
+        matchesPlayed[solo]++; matchesPlayed[x]++; matchesPlayed[y]++;
+      } else if (m.type === '1v1'){
         const a = m.team1[0], b = m.team2[0];
         opponents[idx[a]][idx[b]]++; opponents[idx[b]][idx[a]]++;
-        [a, b].forEach(p => matchesPlayed[p]++);
+        matchesPlayed[a]++; matchesPlayed[b]++;
       }
     }
 
     rounds.push({ matches, sitOuts: Array.from(sitOutThis) });
   }
 
-  return { rounds, teammates, opponents, players, specialCount, soloCount, matchesPlayed, sitOuts, count2v2, count1v1, count1v2 };
+  return {
+    rounds, teammates, opponents, players,
+    specialCount, soloCount, matchesPlayed, sitOuts,
+    count2v2, count1v1, count1v2
+  };
 }
+
+// helper
+function opponentPenalty(teamA, teamB, opponents, idx){
+  let s=0;
+  for(const a of teamA) for(const b of teamB) s += opponents[idx[a]][idx[b]];
+  return s;
+}
+
 
 function generate() {
   const nPlayers = parseInt(document.getElementById("players").value);
