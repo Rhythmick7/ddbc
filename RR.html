@@ -5,40 +5,103 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Round Robin Schedule Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f8fafc; color: #222; padding: 20px; }
-    h1 { text-align: center; margin-bottom: 20px; }
-    .controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 20px; }
-    label { font-weight: bold; }
-    input { width: 70px; text-align: center; }
-    select, button { padding: 5px 10px; }
-    button { cursor: pointer; border: none; background: #2563eb; color: white; border-radius: 5px; }
-    button:hover { background: #1d4ed8; }
-    pre { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); white-space: pre-wrap; }
-    .export-buttons { text-align: center; margin-top: 10px; }
-    table { border-collapse: collapse; margin: 20px auto; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: center; }
-    th { background: #2563eb; color: white; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f8f9fb;
+      color: #222;
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    label {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    input {
+      width: 60px;
+      padding: 0.3rem;
+      margin-right: 1rem;
+    }
+    button {
+      background: #005bbb;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #004899;
+    }
+    #controls {
+      margin-bottom: 1rem;
+    }
+    #schedule {
+      margin-top: 1.5rem;
+    }
+    .round {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .round h3 {
+      margin: 0 0 0.5rem;
+      color: #005bbb;
+    }
+    #exportButtons {
+      margin-top: 1rem;
+      display: none;
+    }
+    em {
+      color: #666;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
+
 <body>
   <h1>Round Robin Schedule Generator</h1>
 
-  <div class="controls">
-    <label>Players:</label> <input id="players" type="number" min="4" max="32" value="13" />
-    <label>Rounds:</label> <input id="rounds" type="number" min="1" value="4" />
-    <label>Max Matches per Round:</label> <input id="maxMatches" type="number" min="1" value="5" />
-    <button onclick="generate()">Generate Schedule</button>
+  <div id="controls">
+    <label>Players: <input type="number" id="numPlayers" value="13" min="4" max="32" /></label>
+    <label>Rounds: <input type="number" id="numRounds" value="4" min="1" /></label>
+    <label>Max Matches per Round: <input type="number" id="maxMatches" value="5" min="1" /></label>
+    <br /><br />
+    <button id="generateBtn" onclick="generateSchedule()">Generate Schedule</button>
   </div>
 
-  <pre id="output"></pre>
-  <div id="summary"></div>
-
-  <div class="export-buttons" id="exportButtons" style="display:none;">
-    <button onclick="exportCSV()">Export to CSV</button>
-    <button onclick="exportPDF()">Export to PDF</button>
+  <div id="exportButtons">
+    <button onclick="exportCSV()">Export CSV</button>
+    <button onclick="exportPDF()">Export PDF</button>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="scheduler.js" defer></script>
+  <div id="schedule"></div>
+
+  <script src="scheduler.js"></script>
+  <script>
+    // Simple placeholder export implementations
+    function exportCSV() {
+      if (!window.currentSchedule) {
+        alert("Please generate a schedule first.");
+        return;
+      }
+      alert("CSV export coming soon — schedule generated successfully!");
+    }
+    function exportPDF() {
+      if (!window.currentSchedule) {
+        alert("Please generate a schedule first.");
+        return;
+      }
+      alert("PDF export coming soon — schedule generated successfully!");
+    }
+  </script>
 </body>
 </html>
