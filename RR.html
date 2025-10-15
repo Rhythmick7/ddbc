@@ -64,6 +64,19 @@
       color: #666;
       font-size: 0.9rem;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #e8f0fe;
+    }
   </style>
 </head>
 
@@ -87,20 +100,102 @@
 
   <script src="scheduler.js"></script>
   <script>
-    // Simple placeholder export implementations
+    // ---- Export CSV ----
     function exportCSV() {
       if (!window.currentSchedule) {
         alert("Please generate a schedule first.");
         return;
       }
-      alert("CSV export coming soon — schedule generated successfully!");
+
+      const { rounds, players, count2v2, count1v1, count1v2, sitOuts } = window.currentSchedule;
+      let csv = "Round Robin Schedule\n\n";
+
+      // Matches
+      for (const R of rounds) {
+        csv += `Round ${R.round}\n`;
+        for (const m of R.matches) {
+          if (m.type === "2v2")
+            csv += `${m.team1.join(",")} vs ${m.team2.join(",")}\n`;
+          else if (m.type === "1v1")
+            csv += `${m.team1[0]} vs ${m.team2[0]} (1v1)\n`;
+          else
+            csv += `${m.team1[0]} vs (${m.team2.join(",")}) (1v2)\n`;
+        }
+        if (R.sitOuts.length)
+          csv += `Sitting out: ${R.sitOuts.join(",")}\n`;
+        csv += "\n";
+      }
+
+      // Validation table
+      csv += "Player,2v2,1v2,1v1,Sit Outs\n";
+      players.forEach(p => {
+        csv += `${p},${count2v2[p]},${count1v2[p]},${count1v1[p]},${sitOuts[p]}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "schedule.csv";
+      a.click();
+      URL.revokeObjectURL(url);
     }
+
+    // ---- Export PDF ----
     function exportPDF() {
       if (!window.currentSchedule) {
         alert("Please generate a schedule first.");
         return;
       }
-      alert("PDF export coming soon — schedule generated successfully!");
+
+      const { jsPDF } = window.jspdf || {};
+      if (!jsPDF) {
+        alert("PDF export requires jsPDF (optional add-on).");
+        return;
+      }
+
+      const doc = new jsPDF();
+      let y = 10;
+      doc.setFontSize(14);
+      doc.text("Round Robin Schedule", 10, y);
+      y += 8;
+      doc.setFontSize(10);
+
+      const { rounds, players, count2v2, count1v1, count1v2, sitOuts } = window.currentSchedule;
+      rounds.forEach(R => {
+        doc.text(`Round ${R.round}`, 10, y);
+        y += 6;
+        R.matches.forEach(m => {
+          let line = "";
+          if (m.type === "2v2")
+            line = `${m.team1.join(", ")} vs ${m.team2.join(", ")}`;
+          else if (m.type === "1v1")
+            line = `${m.team1[0]} vs ${m.team2[0]} (1v1)`;
+          else
+            line = `${m.team1[0]} vs (${m.team2.join(", ")}) (1v2)`;
+          doc.text(line, 15, y);
+          y += 6;
+        });
+        if (R.sitOuts.length) {
+          doc.text(`Sitting out: ${R.sitOuts.join(", ")}`, 15, y);
+          y += 8;
+        } else y += 4;
+      });
+
+      y += 10;
+      doc.setFontSize(12);
+      doc.text("Validation Table", 10, y);
+      y += 8;
+      doc.setFontSize(10);
+      doc.text("Player | 2v2 | 1v2 | 1v1 | Sit Outs", 10, y);
+      y += 6;
+      players.forEach(p => {
+        const line = `${p} | ${count2v2[p]} | ${count1v2[p]} | ${count1v1[p]} | ${sitOuts[p]}`;
+        doc.text(line, 10, y);
+        y += 6;
+      });
+
+      doc.save("schedule.pdf");
     }
   </script>
 </body>
