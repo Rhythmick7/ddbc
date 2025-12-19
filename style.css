@@ -165,3 +165,23 @@ tr:hover {
 .closebtn:hover {
   color: black;
 }
+
+.section-submenu{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:8px 0 16px;
+}
+.section-submenu a{
+  display:inline-block;
+  padding:6px 10px;
+  background:#f3f3f3;
+  color:#111;
+  text-decoration:none;
+  border:1px solid #d0d0d0;
+  border-radius:4px;
+  font-size:0.95rem;
+}
+.section-submenu a:focus,
+.section-submenu a:hover{ outline:none; background:#e6f0ff; border-color:#a8c8ff; }
+.section-submenu a.active{ background:#007acc; color:#fff; border-color:#007acc; }

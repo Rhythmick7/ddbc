@@ -36,8 +36,14 @@
              along with a brief history of each trophy and a list of winners.
         </p>
 
-        <h2>The Longley Trophy</h2>
-
+        <h2 id="Longley">The Longley Trophy</h2>
+        <div class="section-submenu" role="navigation" aria-label="Sections">
+        <a href="#Longley">Longley</a>
+        <a href="#Tingay">Tingay</a>
+        <a href="#Kilner">Kilner</a>
+        <a href="#LadiesShield">Ladies Shield</a>
+        <a href="#RRShield">Round Robin</a>
+        </div>
         <p>
             This trophy was presented to the Denby Dale Working Men's Club in 1961, presumably for the use of the Bowling Club.
             The trophy has been awarded both for Ladies Pairs and Mixed Pairs. 
@@ -112,7 +118,14 @@
                 <td>Susan Black</td></tr>
         </table>
 
-        <h2>Cyril Tingay Memorial Rosebowl</h2>
+        <h2 id="Tingay">Cyril Tingay Memorial Rosebowl</h2>
+        <div class="section-submenu" role="navigation" aria-label="Sections">
+        <a href="#Longley">Longley</a>
+        <a href="#Tingay">Tingay</a>
+        <a href="#Kilner">Kilner</a>
+        <a href="#LadiesShield">Ladies Shield</a>
+        <a href="#RRShield">Round Robin</a>
+        </div>
 
         <p>
             This trophy was awarded for Ladies Singles 1984 - 2015, then for Ladies Pairs 2016, 2018 and 2019.
@@ -166,7 +179,15 @@
 
         </table>
 
-        <h2>E & A Kilner Memorial Rosebowl</h2>
+        <h2 id="Kilner">E & A Kilner Memorial Rosebowl</h2>
+
+        <div class="section-submenu" role="navigation" aria-label="Sections">
+        <a href="#Longley">Longley</a>
+        <a href="#Tingay">Tingay</a>
+        <a href="#Kilner">Kilner</a>
+        <a href="#LadiesShield">Ladies Shield</a>
+        <a href="#RRShield">Round Robin</a>
+        </div>
 
         <p>
             Awarded for Mixed Pairs between 1988 and 2015, and again in 2025.
@@ -207,7 +228,15 @@
             <tr><th>2025</th><td>Karen Taylor<br>David Barraclough</td></tr>
         </table>
 
-        <h2>Averages Shield</h2>
+        <h2  id="LadiesShield">Averages Shield</h2>
+
+        <div class="section-submenu" role="navigation" aria-label="Sections">
+        <a href="#Longley">Longley</a>
+        <a href="#Tingay">Tingay</a>
+        <a href="#Kilner">Kilner</a>
+        <a href="#LadiesShield">Ladies Shield</a>
+        <a href="#RRShield">Round Robin</a>
+        </div>
 
         <p>
             This trophy was awarded for the Ladies Section Averages Winners between 2000 and 2018.
@@ -242,8 +271,53 @@
             <tr><th>2018</th><td>J Maddrell</td></tr>
         </table>
 
+        <h2  id="RRShield">Round Robin Shield</h2>
+
+        <div class="section-submenu" role="navigation" aria-label="Sections">
+            <a href="#Longley">Longley</a>
+            <a href="#Tingay">Tingay</a>
+            <a href="#Kilner">Kilner</a>
+            <a href="#LadiesShield">Ladies Shield</a>
+            <a href="#RRShield">Round Robin</a>
+        </div>
+
+        <p>
+            This new shield for 2025 is awarded to the highest average score across the Round Robin season. 
+        </p>
+
+        <img src="media/trophies/rr_shield.jpeg"
+            alt="Denby Dale Bowling Club" class="img" />    
+        
+        <table class="trophy-table">
+            <tr>
+                <th class="leftcol" scope="col">Year</th>
+                <th class="schdcol" scope="col">Winner</th>
+            </tr>
+            <tr><th>2025</th><td>Neale Wallace</td></tr>
+        </table>
+
     </div>
 
+    <script>
+    document.querySelectorAll('.section-submenu a').forEach(a=>{
+    a.addEventListener('click', e=>{
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        history.replaceState(null,'', '#'+id);
+        setActiveLink();
+    });
+    });
+    function setActiveLink(){
+    const hash = location.hash || '#Longley';
+    document.querySelectorAll('.section-submenu a').forEach(a=>{
+        a.classList.toggle('active', a.getAttribute('href')===hash);
+    });
+    }
+    window.addEventListener('hashchange', setActiveLink);
+    setActiveLink();
+    </script>
 
 </body>
 
