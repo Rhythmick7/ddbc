@@ -76,7 +76,7 @@ h4 {
 }
 
 /* Tables */
-table, th, sch.td, tr {
+table, th, td, tr {
     border: 2px solid rgb(171, 169, 169);
     border-collapse: collapse;
     text-align:left;
