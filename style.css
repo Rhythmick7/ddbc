@@ -54,6 +54,15 @@ h4 {
     color: white;
 }
 
+.section-submenu {
+    position: sticky;
+    top: 46px; /* same height as your fixed nav bar */
+    background-color: #fff;
+    padding: 8px 0;
+    z-index: 900;
+}
+
+
 .welcome {
     font-size: 24pt;
     color:  #ff0000;
