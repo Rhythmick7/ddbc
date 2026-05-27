@@ -116,7 +116,7 @@ tr:hover {
     top: 2.8rem;
 }
 
-.BN-container {
+.BN-Container {
     display: flex; 
     flex-direction: row;
     flex-wrap:wrap;
