@@ -13,6 +13,8 @@ h1 {
 }
 h2 {
     font-size: 1.2em;
+    margin-top: 0;
+    scroll-margin-top: 90px;
 }
 h3 {
     font-size: 1.1em;
@@ -21,9 +23,7 @@ h4 {
     font-size: 1em;
 }
 .main {
-    scroll-padding-top: 46px;
     position: static;
-    padding-top: 46px;
 }
 
 .topnav {
@@ -119,8 +119,32 @@ tr:hover {
 .trophy-table {
     width: 100%;
 }
+.trophy-table th, 
+.trophy-table td {
+    padding: 8px 12px;
+}
+
+.trophy-table tbody tr:nth-child(even) {
+    background-color: #f5f5ff;
+}
 
 
+.trophy-section h2 {
+    margin-top: 0;
+    scroll-margin-top: 160px; /* this is the magic */
+}
+
+.trophy-section {
+    padding-top: 1px; /* prevents margin collapse */
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #ccc;
+}
+.trophy-section img {
+    display: block;
+    margin: 1rem auto;
+    max-width: 300px;
+}
 
 .top-spacer {
     position: relative; 
