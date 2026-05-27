@@ -83,38 +83,42 @@ h4 {
 }
 
 /* Tables */
-table, th, td, tr {
-    border: 2px solid rgb(171, 169, 169);
+table {
+    width: 100%;
     border-collapse: collapse;
-    text-align:left;
-    padding: 5px;
-    font-size: 1rem;
-    background-color:  #e8e8f8;
-  }
+    margin: 1em 0;
+}
 
-th[scope='col'] {
-    background-color:  #e8e8f8;
-  }
-th[scope='row'] {
+th, td {
+    border: 2px solid rgb(171, 169, 169);
+    padding: 5px 10px;
+    text-align: left;
     background-color: #e8e8f8;
 }
-td[scope='event'] {
-    background-color: rgb(241, 245, 239);
+
+th {
+    background-color: #e8e8f8;
+    font-weight: bold;
 }
+
+/* Special cells */
 td.busy {
     background-color: #a6e28c;
 }
-tr:hover {
-    background-color: #d9e3e3;
-} 
-.trophy-table {
-    /* background-image: url('media/wood.jpg'); */
-    width: 100%;
-    /* background-color: transparent;
-    color: gold;
-    padding: 20px 20px; */
+
+td[scope='event'] {
+    background-color: rgb(241, 245, 239);
 }
 
+/* Hover effect */
+tr:hover {
+    background-color: #d9e3e3;
+}
+
+/* Trophy table wrapper */
+.trophy-table {
+    width: 100%;
+}
 
 
 
