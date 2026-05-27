@@ -92,7 +92,7 @@ th[scope='row'] {
 td[scope='event'] {
     background-color: rgb(241, 245, 239);
 }
-td[scope='busy'] {
+td.busy {
     background-color: #a6e28c;
 }
 tr:hover {
