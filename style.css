@@ -5,8 +5,9 @@
 body {
     margin-top: 46px;
     font-family: Tahoma;
-    font-size: min(12px,3vw);
+    font-size: clamp(14px, 2vw, 18px);
 }
+
 h1 {
     font-size: 1.4em;
 }
@@ -23,7 +24,6 @@ h4 {
     scroll-padding-top: 46px;
     position: static;
     padding-top: 46px;
-    font-size: 1.8em;
 }
 
 .topnav {
