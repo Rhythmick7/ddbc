@@ -26,6 +26,10 @@ h4 {
 .main {
     position: static;
 }
+.main > p:first-of-type {
+    margin-top: 1rem;
+}
+
 
 .topnav {
     overflow: hidden;
@@ -40,7 +44,7 @@ h4 {
     display: block;
     color: #f2f2f2;
     text-align: center;
-    padding: 10px 10px;
+    padding: 12px 8px;
     text-decoration: none;
     font-size: clamp(14px, 2.5vw, 22px);
 }
@@ -91,7 +95,7 @@ table {
 }
 
 th, td {
-    border: 2px solid rgb(171, 169, 169);
+    border: 1px solid #ccc;
     padding: 5px 10px;
     text-align: left;
     background-color: #e8e8f8;
@@ -146,6 +150,10 @@ tr:hover {
     padding-bottom: 2rem;
     border-bottom: 2px solid #ccc;
 }
+.trophy-section:first-of-type {
+    margin-top: 2rem;
+}
+
 .trophy-section img {
     display: block;
     margin: 1rem auto;
