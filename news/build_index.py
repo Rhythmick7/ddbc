@@ -3,6 +3,16 @@ import json
 import re
 
 NEWS_DIR = "news"
+
+# 1. Auto‑rename any .txt files to .md.txt
+for filename in os.listdir(NEWS_DIR):
+    if filename.endswith(".txt") and not filename.endswith(".md.txt"):
+        old_path = os.path.join(NEWS_DIR, filename)
+        new_path = os.path.join(NEWS_DIR, filename + ".md")
+        os.rename(old_path, new_path)
+        print(f"Renamed {filename} → {filename}.md")
+
+
 OUTPUT_FILE = os.path.join(NEWS_DIR, "index.json")
 
 yaml_pattern = re.compile(r"^---\s*(.*?)\s*---", re.DOTALL)
@@ -27,7 +37,9 @@ def main():
     entries = []
 
     for filename in os.listdir(NEWS_DIR):
-        if not filename.endswith(".md"):
+
+        # Only process .md.txt files, excluding the template
+        if not (filename.endswith(".md.txt") and filename != "template.md.txt"):
             continue
 
         filepath = os.path.join(NEWS_DIR, filename)
@@ -47,7 +59,7 @@ def main():
 
         entries.append(entry)
 
-    # Sort newest-first by filename (YYYY-MM-DD-title.md)
+    # Sort newest-first by filename (YYYY-MM-DD-title.md.txt)
     entries.sort(key=lambda x: x["file"], reverse=True)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:

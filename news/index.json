@@ -1,9 +1,9 @@
 [
   {
-    "file": "template.md.txt",
+    "file": "2026-05-02-test.md.txt",
     "title": "<short headline>",
-    "start": "YYYY-MM-DD",
-    "end": "YYYY-MM-DD",
+    "start": "2026-06-01",
+    "end": "2026-06-02",
     "author": "Jane Bloggs"
   },
   {

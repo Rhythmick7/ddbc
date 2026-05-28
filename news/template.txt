@@ -31,10 +31,4 @@ To insert an email address...
 The dates at the top (between the lines) control when the news item appears on the website.
 
 - **start:** first day it should show  
-- **end:** last day it should show  
-
-If you don’t know the end date, set it far in the future:
-
-
-
-*Published: 28 May 2025*
+- **end:** last day it should show  (set it to the far future if you want it to stay around forever)
