@@ -6,6 +6,7 @@ body {
     margin-top: 46px;
     font-family: Tahoma;
     font-size: clamp(14px, 2vw, 18px);
+    line-height: 1.5;
 }
 
 h1 {
@@ -132,6 +133,8 @@ tr:hover {
 .trophy-section h2 {
     margin-top: 0;
     scroll-margin-top: 160px; /* this is the magic */
+    font-size: 1.3em;
+    margin-bottom: 0.5rem;
 }
 
 .trophy-section {
