@@ -25,6 +25,7 @@ h4 {
 }
 .main {
     position: static;
+    padding-top: 20px;
 }
 .main > p:first-of-type {
     margin-top: 1rem;
@@ -235,3 +236,25 @@ tr:hover {
 .section-submenu a:focus,
 .section-submenu a:hover{ outline:none; background:#e6f0ff; border-color:#a8c8ff; }
 .section-submenu a.active{ background:#007acc; color:#fff; border-color:#007acc; }
+
+.news-footer {
+    font-size: 0.9em;
+    color:blue;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    line-height: 1.4;
+    font-weight: bold;      /* makes it bold */
+    font-style: italic;     /* makes it italic */
+}
+
+
+.news-item {
+    margin-bottom: 2.5em;
+}
+
+.news-item hr {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    border: none;
+    border-top: 1px solid #ccc;
+}

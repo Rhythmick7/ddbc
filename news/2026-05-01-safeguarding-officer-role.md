@@ -1,3 +1,9 @@
+---
+title: Safeguarding Officer Role
+start: 2026-05-01
+end: 2026-06-30
+author: Helen Sansom
+---
 # Safeguarding Officer Role
 
 ### Helen Sansom provides a brief overview of the Safeguarding Officer role and responsibilities for the club.
@@ -10,5 +16,3 @@ A key responsibility is to record and report safeguarding concerns to Bowls Engl
 
 If anyone has any safeguarding concerns either regarding themselves or others then they should contact the Safeguarding Officer to discuss the matter in confidence.  
 The Safeguarding Officer will listen in a sympathetic and non‑judgemental manner, record the concerns, and report to the Bowls England Safeguarding team who will then investigate.
-
-*Published: 20 May 2025*
