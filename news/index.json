@@ -1,0 +1,37 @@
+[
+  {
+    "file": "template.md",
+    "title": "<short headline>",
+    "start": "YYYY-MM-DD",
+    "end": "YYYY-MM-DD",
+    "author": "Jane Bloggs"
+  },
+  {
+    "file": "2026-05-01-safeguarding-officer-role.md",
+    "title": "Safeguarding Officer Role",
+    "start": "2026-05-01",
+    "end": "2026-06-30",
+    "author": "Helen Sansom"
+  },
+  {
+    "file": "2026-05-01-new-committee-members.md",
+    "title": "New Committee Members",
+    "start": "2026-05-01",
+    "end": "2026-06-30",
+    "author": "Mick Jennings"
+  },
+  {
+    "file": "2026-05-01-ladies-social-bowling-morning.md",
+    "title": "Ladies Social Bowling Morning",
+    "start": "2026-05-01",
+    "end": "2026-06-30",
+    "author": "Janet Depledge"
+  },
+  {
+    "file": "2026-05-01-green-schedule-publication.md",
+    "title": "Green Schedule Publication",
+    "start": "2026-05-01",
+    "end": "2026-06-14",
+    "author": "Mick Jennings"
+  }
+]

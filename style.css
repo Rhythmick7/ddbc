@@ -5,13 +5,17 @@
 body {
     margin-top: 46px;
     font-family: Tahoma;
-    font-size: min(12px,3vw);
+    font-size: clamp(14px, 2vw, 18px);
+    line-height: 1.5;
 }
+
 h1 {
     font-size: 1.4em;
 }
 h2 {
     font-size: 1.2em;
+    margin-top: 0;
+    scroll-margin-top: 90px;
 }
 h3 {
     font-size: 1.1em;
@@ -20,11 +24,13 @@ h4 {
     font-size: 1em;
 }
 .main {
-    scroll-padding-top: 46px;
     position: static;
-    padding-top: 46px;
-    font-size: 1.8em;
+    padding-top: 20px;
 }
+.main > p:first-of-type {
+    margin-top: 1rem;
+}
+
 
 .topnav {
     overflow: hidden;
@@ -39,11 +45,9 @@ h4 {
     display: block;
     color: #f2f2f2;
     text-align: center;
-    padding: 10px 10px;
+    padding: 12px 8px;
     text-decoration: none;
-    font-size: calc(16px + 1vw);    
-    /* font-size: max(4vw, 12px); */
-    /* font-size: 3vw; */
+    font-size: clamp(14px, 2.5vw, 22px);
 }
 
 .topnav a:hover {
@@ -55,6 +59,15 @@ h4 {
     background-color: #04AA6D;
     color: white;
 }
+
+.section-submenu {
+    position: sticky;
+    top: 46px; /* same height as your fixed nav bar */
+    background-color: #fff;
+    padding: 8px 0;
+    z-index: 900;
+}
+
 
 .welcome {
     font-size: 24pt;
@@ -76,40 +89,77 @@ h4 {
 }
 
 /* Tables */
-table, th, td, tr {
-    border: 2px solid rgb(171, 169, 169);
+table {
+    width: 100%;
     border-collapse: collapse;
-    text-align:left;
-    padding: 5px;
-    font-size: 1rem;
-    background-color:  #e8e8f8;
-  }
+    margin: 1em 0;
+}
 
-th[scope='col'] {
-    background-color:  #e8e8f8;
-  }
-th[scope='row'] {
+th, td {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    text-align: left;
     background-color: #e8e8f8;
 }
+
+th {
+    background-color: #e8e8f8;
+    font-weight: bold;
+}
+
+/* Special cells */
+td.busy {
+    background-color: #a6e28c;
+}
+
 td[scope='event'] {
     background-color: rgb(241, 245, 239);
 }
-td[scope='busy'] {
-    background-color: #a6e28c;
-}
+
+/* Hover effect */
 tr:hover {
     background-color: #d9e3e3;
-} 
+}
+
+/* Trophy table wrapper */
 .trophy-table {
-    /* background-image: url('media/wood.jpg'); */
     width: 100%;
-    /* background-color: transparent;
-    color: gold;
-    padding: 20px 20px; */
+}
+.trophy-table th, 
+.trophy-table td {
+    padding: 8px 12px;
+}
+
+.trophy-table tbody tr:nth-child(even) {
+    background-color: #f5f5ff;
+}
+.table-wrapper {
+    overflow-x: auto;
 }
 
 
+.trophy-section h2 {
+    margin-top: 0;
+    scroll-margin-top: 160px; /* this is the magic */
+    font-size: 1.3em;
+    margin-bottom: 0.5rem;
+}
 
+.trophy-section {
+    padding-top: 1px; /* prevents margin collapse */
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #ccc;
+}
+.trophy-section:first-of-type {
+    margin-top: 2rem;
+}
+
+.trophy-section img {
+    display: block;
+    margin: 1rem auto;
+    max-width: 300px;
+}
 
 .top-spacer {
     position: relative; 
@@ -171,17 +221,40 @@ tr:hover {
   gap:8px;
   flex-wrap:wrap;
   margin:8px 0 16px;
+  row-gap: 6px;
 }
 .section-submenu a{
   display:inline-block;
-  padding:6px 10px;
+  padding:8px 12px;
   background:#f3f3f3;
   color:#111;
   text-decoration:none;
   border:1px solid #d0d0d0;
   border-radius:4px;
-  font-size:0.95rem;
+  font-size:1rem;
 }
 .section-submenu a:focus,
 .section-submenu a:hover{ outline:none; background:#e6f0ff; border-color:#a8c8ff; }
 .section-submenu a.active{ background:#007acc; color:#fff; border-color:#007acc; }
+
+.news-footer {
+    font-size: 0.9em;
+    color:blue;
+    margin-top: 1em;
+    margin-bottom: 2em;
+    line-height: 1.4;
+    font-weight: bold;      /* makes it bold */
+    font-style: italic;     /* makes it italic */
+}
+
+
+.news-item {
+    margin-bottom: 2.5em;
+}
+
+.news-item hr {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    border: none;
+    border-top: 1px solid #ccc;
+}
