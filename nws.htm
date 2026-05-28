@@ -1,6 +1,5 @@
 <!DOCTYPE html>
- 
-<html lang = "en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Mick Jennings" />
@@ -8,12 +7,17 @@
     <meta name="keywords" content="Denby Dale Bowling Club News" />
     <meta name="revisit-after" content="5 days">
     <title>Club News</title>
+
     <link rel="stylesheet" href="style.css">
     <link rel="icon" sizes="192x192" href="/media/android-chrome-192x192.png">
     <link rel="apple-touch-icon" href="/media/apple-touch-icon.png" />
     <link rel="icon" type="image/x-icon" href="/media/favicon-32x32.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Markdown parser -->
+    <script src="scripts/marked.min.js"></script>
 </head>
+
 <body>
 
     <div class="topnav">
@@ -29,7 +33,57 @@
 
         <h1>Denby Dale Bowling Club News Items</h1>
 
-        <div class="item">
+        <!-- News items will be injected here -->
+        <div id="news"></div>
+
+    </div>
+
+    <script>
+    // Configure Marked safely
+    marked.setOptions({
+        mangle: false,
+        headerIds: false,
+        breaks: true
+    });
+
+    async function loadNews() {
+        const container = document.getElementById('news');
+
+        // Load index.json (list of markdown files)
+        let files;
+        try {
+            files = await fetch('news/index.json').then(r => r.json());
+        } catch (err) {
+            container.innerHTML = "<p>Unable to load news items.</p>";
+            return;
+        }
+
+        // Load each markdown file in order
+        for (const file of files) {
+            try {
+                const md = await fetch('news/' + file).then(r => r.text());
+                const html = marked.parse(md);
+
+                const item = document.createElement('div');
+                item.className = 'news-item';
+                item.innerHTML = html;
+
+                container.appendChild(item);
+
+            } catch (err) {
+                console.error("Error loading:", file, err);
+            }
+        }
+    }
+
+    loadNews();
+    </script>
+
+</body>
+</html>
+
+
+        <!-- <div class="item">
             <h2>Ladies Social Bowling Morning</h2>
             <p>
                 The sun shone, as it should, on the ladies of Denby Dale Bowling Club on a really enjoyable  morning of social bowling. 
@@ -83,9 +137,4 @@
             <p>
                 The green can be booked by email to <a href="mailto:ddbcsecretary@gmail.com">ddbcsecretary@gmail.com</a>.
             </p>
-        </div>
-
-
-    </div>
-</body>
-</html>
+        </div> -->
