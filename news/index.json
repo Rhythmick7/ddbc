@@ -1,12 +1,5 @@
 [
   {
-    "file": "2026-05-02-test.md.txt",
-    "title": "<short headline>",
-    "start": "2026-06-01",
-    "end": "2026-06-02",
-    "author": "Jane Bloggs"
-  },
-  {
     "file": "2026-05-01-safeguarding-officer-role.md.txt",
     "title": "Safeguarding Officer Role",
     "start": "2026-05-01",
@@ -17,7 +10,7 @@
     "file": "2026-05-01-new-committee-members.md.txt",
     "title": "New Committee Members",
     "start": "2026-05-01",
-    "end": "2026-06-30",
+    "end": "2026-05-30",
     "author": "Mick Jennings"
   },
   {
@@ -31,7 +24,7 @@
     "file": "2026-05-01-green-schedule-publication.md.txt",
     "title": "Green Schedule Publication",
     "start": "2026-05-01",
-    "end": "2026-06-14",
+    "end": "2026-05-30",
     "author": "Mick Jennings"
   }
 ]
