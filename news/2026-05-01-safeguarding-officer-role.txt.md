@@ -1,5 +1,9 @@
-
-# Safeguarding Officer Role
+---
+title: Safeguarding Officer Role
+start: 2026-05-01
+end: 2026-06-30
+author: Helen Sansom
+---# Safeguarding Officer Role
 
 ### Helen Sansom provides a brief overview of the Safeguarding Officer role and responsibilities for the club.
 
