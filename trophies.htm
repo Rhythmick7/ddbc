@@ -307,10 +307,16 @@ document.querySelectorAll('.section-submenu a').forEach(a => {
             });
         }
 
+        // ⭐ NEW: highlight the active submenu item
+        document.querySelectorAll('.section-submenu a')
+            .forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+
         history.replaceState(null, '', '#' + id);
     });
 });
 </script>
+
 
 
 
