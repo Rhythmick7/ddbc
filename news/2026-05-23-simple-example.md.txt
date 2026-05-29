@@ -9,7 +9,7 @@ author:
 
 On 29th May 2026 Mick Jennings introduced a very simple mechanism for members to submit news items of interest to other members.
 
-Members simple need to create a text file and email it to the club secretary at
+Members simply need to create a text file and email it to the club secretary at
 ddbcsecretary@gmail.com
 
 Easy peasy - I look forward to seeing lots of content from members.
