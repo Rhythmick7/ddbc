@@ -5,7 +5,7 @@ end: 2099-06-28
 author: Mick Jennings
 ---
 
-# Title
+# Simple way to submit news items for the club
 
 On 29th May 2026 Mick Jennings introduced a very simple mechanism for members to submit news items of interest to other members.
 
@@ -14,11 +14,11 @@ ddbcsecretary@gmail.com
 
 Easy peasy - I look forward to seeing lots of content from members.
 
-## How to make news stories stand out
+# How to make news stories stand out
 
 Members can make words stand out by using **BOLD** and *ITALIC* fonts, or even ***BOLD AND ITALIC*** !
 
-To insert an email address...
+# To insert an email address...
 [Contact the Secretary](mailto:ddbcsecretary@gmail.com)
 
 There's a REALLY simple template on our news page along with a more complete set of instructions for those who want to be more fancy 
