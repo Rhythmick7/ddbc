@@ -1,6 +1,0 @@
----
-start: 2026-05-03
-end: 2026-06-01
----
-
-This is a temporary alert for testing purposes
