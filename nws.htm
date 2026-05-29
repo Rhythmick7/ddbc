@@ -62,6 +62,17 @@ marked.setOptions({
     headerIds: false,
     breaks: true
 });
+const renderer = {
+    code() {
+        return ""; // remove code blocks entirely
+    },
+    codespan() {
+        return ""; // remove inline code entirely
+    }
+};
+
+marked.use({ renderer });
+
 function extractDateFromFilename(filename) {
     return filename.substring(0, 10); // "YYYY-MM-DD"
 }
@@ -70,11 +81,6 @@ const INDEX_URL = "/news/index.json";
 
 // Where to insert the rendered news items
 const NEWS_CONTAINER = document.getElementById("news");
-
-// Extract YYYY-MM-DD from filename
-function extractDateFromFilename(filename) {
-    return filename.substring(0, 10);
-}
 
 // Format date nicely (optional)
 function formatDate(iso) {
