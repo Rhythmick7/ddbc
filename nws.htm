@@ -105,11 +105,7 @@ async function loadNews() {
             return today >= start && today <= end;
         });
 
-        visibleItems.sort((a, b) => {
-            const dateA = extractDateFromFilename(a.file);
-            const dateB = extractDateFromFilename(b.file);
-            return dateB.localeCompare(dateA);
-        });
+        visibleItems.sort((a, b) => b.start.localeCompare(a.start));
 
         for (const item of visibleItems) {
             const mdUrl = `/news/${item.file}`;
