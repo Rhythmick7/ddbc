@@ -1,0 +1,15 @@
+---
+title: Simple example
+start: 2026-05-29
+end: 2099-06-28
+author:
+---
+
+# Title
+
+On 29th May 2026 Mick Jennings introduced a very simple mechanism for members to submit news items of interest to other members.
+
+Members simple need to create a text file and email it to the club secretary at
+ddbcsecretary@gmail.com
+
+Easy peasy - I look forward to seeing lots of content from members.

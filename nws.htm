@@ -31,6 +31,23 @@
 
     <div class="main">
 
+        <div class="news-item">
+            <h1>News item templates</h1>
+            <p>
+                It is now possible (and REALLY easy) for members to submit small news stories for other members to read on the web site.
+            </p>
+            <p>
+                Full instructions in the news items below, and templates to get you started for download by clicking one of the buttons below.
+            </p>
+            <a href="/downloads/Simple.txt" download class="BN-Button download">
+                Really simple example
+            </a>
+            <a href="/downloads/template.txt" download class="BN-Button download">
+                Full template with all instructions
+            </a>
+            <hr>
+        </div>
+
         <h1>Denby Dale Bowling Club News Items</h1>
 
         <!-- News items will be injected here -->
@@ -82,7 +99,11 @@ async function loadNews() {
             return today >= start && today <= end;
         });
 
-        visibleItems.sort((a, b) => b.start.localeCompare(a.start));
+        visibleItems.sort((a, b) => {
+            const dateA = extractDateFromFilename(a.file);
+            const dateB = extractDateFromFilename(b.file);
+            return dateB.localeCompare(dateA);
+        });
 
         for (const item of visibleItems) {
             const mdUrl = `/news/${item.file}`;

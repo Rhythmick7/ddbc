@@ -190,6 +190,10 @@ tr:hover {
     list-style-type: none;
     border-radius: 12px;
 }
+.BN-Button.download {
+    background-color: #04AA6D; /* same green as your nav active */
+}
+
 
 /* The alert message box */
 .alert {

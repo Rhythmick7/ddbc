@@ -1,0 +1,8 @@
+# Title of your news story
+
+Add some text here.
+
+**This will make it bold**
+
+Then save this file and email it to
+ddbcsecretary@gmail.com

@@ -1,0 +1,18 @@
+---
+title: How to include images
+start: 2026-05-01
+end: 9999-12-31
+author: Mick Jenninsg
+---
+# How to include images
+
+Insert images as follows - no spaces in filenames please !
+
+![Image description](//media/image-name.jpeg)
+
+Attach the images as files in the email to the secretary, along with the TXT file. 
+
+Your filename should not include spaces - please replace them with hyphens, for example;
+
+  - Finals day image 1.jpeg  (NO SPACES PLEASE)
+  - Finals-day-image-1.jpeg  (Perfect)

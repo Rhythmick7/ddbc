@@ -22,7 +22,7 @@ Insert images as follows - no spaces in filenames please !
 ![Image description](//media/image-name.jpeg)
 
 To insert an email address...
-[Contact the Secretary](mailto:secretary@DenbyDaleBC.co.uk)
+[Contact the Secretary](mailto:ddbcsecretary@gmail.com)
 
 <!-- This is a comment and will not appear on the website -->
 
