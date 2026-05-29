@@ -1,0 +1,6 @@
+---
+start: 2026-05-05
+end: 2026-06-01
+---
+
+**PLEASE NOTE** that the green will be closed on 1st June for maintenance purposes

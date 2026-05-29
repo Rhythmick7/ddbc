@@ -200,8 +200,26 @@ tr:hover {
   padding: 20px;
   background-color: #04AA6D;
   color: white;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
 }
+.alert p {
+    margin: 0 0 8px 0;
+}
+
+.alert .alert-item {
+    padding: 8px 0; /* slightly more breathing room */
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+}
+
+.alert .alert-item:last-child {
+    border-bottom: none;
+}
+
+/* Remove stray paragraph margins */
+.alert .alert-item p {
+    margin: 0;
+}
+
 
 /* The close button */
 .closebtn {
