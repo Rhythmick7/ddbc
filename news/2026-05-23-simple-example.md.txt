@@ -13,3 +13,12 @@ Members simply need to create a text file and email it to the club secretary at
 ddbcsecretary@gmail.com
 
 Easy peasy - I look forward to seeing lots of content from members.
+
+## How to make news stories stand out
+
+Members can make words stand out by using **BOLD** and *ITALIC* fonts, or even ***BOLD AND ITALIC*** !
+
+To insert an email address...
+[Contact the Secretary](mailto:ddbcsecretary@gmail.com)
+
+There's a REALLY simple template on our news page along with a more complete set of instructions for those who want to be more fancy 
