@@ -77,7 +77,7 @@ async function loadAlerts() {
         // Build combined banner
         container.innerHTML = `
             <div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <span class="closebtn" onclick="dismissAlerts(this)">&times;</span>
                 ${messages.join("")}
             </div>
         `;
@@ -86,5 +86,18 @@ async function loadAlerts() {
         console.error("Error loading alerts:", err);
     }
 }
+function todayKey() {
+    return new Date().toISOString().slice(0, 10);
+}
+function dismissAlerts(el) {
+    el.parentElement.style.display = "none";
+    localStorage.setItem("alertsDismissed", todayKey());
+}
 
-loadAlerts();
+
+// Don't load alerts if dismissed today
+if (localStorage.getItem("alertsDismissed") === todayKey()) {
+    console.log("Alerts dismissed for today");
+} else {
+    loadAlerts();
+}
