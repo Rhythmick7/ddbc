@@ -27,7 +27,14 @@ author: ${author}
 ---
 `;
 
-    const content = `${yaml}\n${body}\n\n------------------------------\n`;
+const content =
+`${yaml}
+# ${title}
+
+${body}
+
+------------------------------
+`;
 
     openEmail(content);
 }
