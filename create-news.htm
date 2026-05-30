@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create News Item</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .news-form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #f4f4f4;
+            border-radius: 8px;
+        }
+        .news-form input, .news-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px 0;
+            font-size: 1rem;
+        }
+        .news-form button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
+        .news-form button:hover {
+            background: #45a049;
+        }
+        .preview-img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="topnav">
+    <a href="index.htm">Home</a>
+    <a href="sch.htm">Schedule</a>
+    <a href="nws.htm">News</a>
+    <a href="trophies.htm">Trophy Cabinet</a>
+    <a href="inf.htm">Info</a>
+    <a href="cnt.htm">Contact</a>
+</div>
+
+<div class="main">
+    <h1>Create a News Story</h1>
+    <p>Fill in the details and press the button to send your story to the club secretary.</p>
+
+    <div class="news-form">
+        <label>Title</label>
+        <input id="title" type="text" placeholder="e.g. Club Competition Results">
+
+        <label>Your Name</label>
+        <input id="author" type="text" placeholder="e.g. John Smith">
+
+        <label>Story</label>
+        <textarea id="body" rows="8" placeholder="Write your news story here..."></textarea>
+
+        <label>Optional Photos</label>
+        <input id="photos" type="file" accept="image/*" multiple onchange="previewPhotos()">
+
+        <div id="preview-area"></div>
+
+        <button onclick="sendEmail()">Create Email</button>
+    </div>
+</div>
+
+<script src="/scripts/create-news.js"></script>
+
+</body>
+</html>
