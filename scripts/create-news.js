@@ -1,22 +1,30 @@
-// Slugify title (no spaces)
+/* Markdown Tips Toggle */
+document.getElementById("md-toggle").addEventListener("click", function () {
+    const panel = document.getElementById("md-tips");
+    if (panel.style.display === "block") {
+        panel.style.display = "none";
+        this.textContent = "Show Markdown Tips";
+    } else {
+        panel.style.display = "block";
+        this.textContent = "Hide Formatting Tips";
+    }
+});
+
+/* Payload Builder */
 function slugify(text) {
     return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-function sendEmail() {
+function buildPayload() {
     const title = document.getElementById("title").value.trim();
     const author = document.getElementById("author").value.trim();
     const body = document.getElementById("body").value.trim();
-
-    if (!title || !author || !body) {
-        alert("Please fill in Title, Name and Story before sending.");
-        return;
-    }
 
     const today = new Date().toISOString().slice(0, 10);
     const end = new Date(Date.now() + 30*24*60*60*1000).toISOString().slice(0, 10);
 
     const safeTitle = slugify(title);
+    const filename = `${today}-${safeTitle}.txt`;
 
     const yaml =
 `---
@@ -27,23 +35,20 @@ author: ${author}
 ---
 `;
 
-const content =
-`${yaml}
+    const fullMessage =
+`==============================
+ COPY EVERYTHING BELOW THIS LINE
+==============================
+
+FILENAME: ${filename}
+
+${yaml}
 # ${title}
 
 ${body}
-
-------------------------------
 `;
 
-    openEmail(content);
-}
+    document.getElementById("payload").value = fullMessage;
 
-function openEmail(content) {
-    const email = "ddbcsecretary@gmail.com";
-    const title = document.getElementById("title").value.trim();
-    const subject = encodeURIComponent("News Submission: " + title);
-    const body = encodeURIComponent(content);
-
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    return true;
 }

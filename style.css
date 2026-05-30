@@ -280,3 +280,111 @@ tr:hover {
     border: none;
     border-top: 1px solid #ccc;
 }
+.news-form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #f4f4f4;
+    border-radius: 8px;
+    box-sizing: border-box;   /* ← also good practice */
+}
+
+.news-form input,
+.news-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;   /* ← THIS stops the overflow */
+}
+
+
+.news-form button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.news-form button:hover {
+    background: #45a049;
+}
+
+        .news-options {
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .option-box {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .option-box h2 {
+            margin-top: 0;
+        }
+
+        .news-form {
+            margin-top: 20px;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .news-form input,
+        .news-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px 0;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .news-form button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .news-form button:hover {
+            background: #45a049;
+        }
+
+        /* Markdown Tips Panel */
+        #md-tips {
+            display: none;
+            background: #eef7ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        #md-toggle {
+            background: #2196F3;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        #md-toggle:hover {
+            background: #1976D2;
+        }

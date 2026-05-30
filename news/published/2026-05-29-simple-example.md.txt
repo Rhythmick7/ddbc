@@ -1,0 +1,16 @@
+---
+title: Simple example
+start: 2026-05-29
+end: 2099-06-28
+author: Mick Jennings
+---
+
+# Simple way to submit news items for the club
+
+On 29th May 2026 Mick Jennings introduced a very simple mechanism for members to submit news items of interest to other members.
+
+Members can fill in a very simple form which will be sent to the secretary. 
+
+If they want to include photos they can download a simple file then send it by email (along with the photos) to the secretary.
+
+Full instructions at the top of the news page.

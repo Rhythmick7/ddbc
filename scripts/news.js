@@ -50,7 +50,7 @@ async function loadNews() {
         visibleItems.sort((a, b) => b.start.localeCompare(a.start));
 
         for (const item of visibleItems) {
-            const mdUrl = `/news/${item.file}`;
+            const mdUrl = `/news/published/${item.file}`;
             const mdResponse = await fetch(mdUrl);
             const mdText = await mdResponse.text();
 

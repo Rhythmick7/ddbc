@@ -2,41 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create News Item</title>
+    <title>Create News Story</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 
     <style>
-        .news-form {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 15px;
-            background: #f4f4f4;
-            border-radius: 8px;
-        }
-        .news-form input, .news-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px 0;
-            font-size: 1rem;
-        }
-        .news-form button {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2rem;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 6px;
-        }
-        .news-form button:hover {
-            background: #45a049;
-        }
-        .preview-img {
-            max-width: 100%;
-            margin-top: 10px;
-            border-radius: 6px;
-        }
     </style>
 </head>
 
@@ -53,21 +23,87 @@
 
 <div class="main">
     <h1>Create a News Story</h1>
-    <p>Fill in the details and press the button to send your story to the club secretary.</p>
+    <p>Select the option that best suits your needs.</p>
 
-    <div class="news-form">
-        <label>Title</label>
-        <input id="title" type="text" placeholder="e.g. Club Competition Results">
+    <a href="nws.htm" class="BN-Button download">
+        Back to the news page
+    </a>
 
-        <label>Your Name</label>
-        <input id="author" type="text" placeholder="e.g. John Smith">
 
-        <label>Story</label>
-        <textarea id="body" rows="8" placeholder="Write your news story here..."></textarea>
+    <div class="news-options">
 
-        <button onclick="sendEmail()">Create Email</button>
+        <!-- SIMPLE NEWS STORY OPTION -->
+        <div class="option-box">
+            <h2>Simple News Story</h2>
+            <p>Quick and easy. No photos. Simple formatting is supported (see below for tips).</p>
+
+            <div class="news-form">
+                <form action="https://formspree.io/f/mjgzzdgl" method="POST" onsubmit="return buildPayload()">
+
+                    <input type="hidden" name="_format" value="plain">
+
+                    <label>Title</label>
+                    <input type="text" id="title" name="_title" required>
+
+                    <label>Your Name</label>
+                    <input type="text" id="author" name="_author" required>
+
+                    <label>Story</label>
+                    <textarea id="body" name="_body" rows="8" required></textarea>
+
+                    <input type="hidden" id="payload" name="payload">
+
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+
+            <button id="md-toggle">Show Formatting Tips</button>
+
+            <div id="md-tips">
+                <strong>Formatting Tips</strong><br><br>
+                <br>
+                # Heading 1<br>
+                ## Heading 2<br>
+                <br>
+                *italic*<br>
+                **bold**<br>
+                ***bold italic***<br>
+                <br>
+                - bullet list<br>
+                1. numbered list<br>
+                <br>
+                [Link text](https://example.com)<br>
+                <br>
+                Horizontal rule:<br>
+                ---<br>
+            </div>
+
+
+        </div>
+
+        <!-- RICH CONTENT OPTION -->
+        <div class="option-box">
+            <h2>Richer Content (Photos, Longer Articles)</h2>
+            <p>
+                Download a template, write your story offline, and email it to the club secretary
+                with any photos attached.
+            </p>
+
+            <p>
+                <a href="downloads/Story Template.txt" download class="BN-Button download">
+                    Download Story Template
+                </a>
+            </p>
+
+            <p>
+                When finished, email your completed file and photos to:<br>
+                <strong><a href="mailto:ddbcsecretary@gmail.com">ddbcsecretary@gmail.com</a></strong>
+            </p>
+        </div>
+
     </div>
 </div>
+
 
 <script src="/scripts/create-news.js"></script>
 
