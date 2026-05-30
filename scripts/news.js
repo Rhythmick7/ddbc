@@ -73,8 +73,8 @@ async function loadNews() {
 
             let expiryLine = "";
 
-            // Only show expiry if within 30 days
-            if (daysToEnd <= 30 && daysToEnd >= 0) {
+            // Only show expiry if within 7 days
+            if (daysToEnd <= 7 && daysToEnd >= 0) {
                 if (daysToEnd === 0) {
                     expiryLine = "expires today<br>";
                 } else if (daysToEnd === 1) {
