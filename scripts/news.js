@@ -42,8 +42,8 @@ async function loadNews() {
         const today = new Date();
 
         const visibleItems = items.filter(item => {
-            const start = new Date(item.start);
-            const end = new Date(item.end);
+            const start = new Date(item.start  + "T00:00:00");
+            const end = new Date(item.end  + "T23:59:59");
             return today >= start && today <= end;
         });
 
@@ -65,14 +65,31 @@ async function loadNews() {
             block.className = "news-item";
 
             const pubDate = extractDateFromFilename(item.file);
-            const endDate = item.end;
+            const endDateObj = new Date(item.end);
+
+            // Calculate days until expiry
+            const msPerDay = 1000 * 60 * 60 * 24;
+            const daysToEnd = Math.ceil((endDateObj - today) / msPerDay);
+
+            let expiryLine = "";
+
+            // Only show expiry if within 30 days
+            if (daysToEnd <= 30 && daysToEnd >= 0) {
+                if (daysToEnd === 0) {
+                    expiryLine = "expires today<br>";
+                } else if (daysToEnd === 1) {
+                    expiryLine = "expires tomorrow<br>";
+                } else {
+                    expiryLine = `expires in ${daysToEnd} days<br>`;
+                }
+            }
 
             block.innerHTML = `
                 ${html}
                 <p class="news-footer">
                     by: ${item.author}<br>
                     on: ${formatDate(pubDate)}<br>
-                    ends: ${formatDate(endDate)}
+                    ${expiryLine}
                 </p>
                 <hr>
             `;
