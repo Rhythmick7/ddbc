@@ -42,16 +42,14 @@ FILENAME_MARKER = cfg["filename_marker"]
 
 os.makedirs(TARGET_FOLDER, exist_ok=True)
 
-# -----------------------------
-# Windows notification helper
-# -----------------------------
-def notify_new_items(count):
-    toast = Notification(
-        app_id="DDBC News Harvester",
-        title="DDBC News",
-        msg=f"{count} {NOTIFICATION_TEXT}"
-    )
-    toast.show()
+import tkinter as tk
+from tkinter import messagebox
+
+def popup_alert(message):
+    root = tk.Tk()
+    root.withdraw()  # Hide the empty main window
+    messagebox.showinfo("DDBC News Harvester", message)
+    root.destroy()
 
 # -----------------------------
 # Start log entry
@@ -217,10 +215,9 @@ try:
         imap.copy(msg_id, "Processed-News")
         imap.store(msg_id, "+FLAGS", "\\Deleted")
 
-    # Notify if needed
     if new_items > 0:
-        notify_new_items(new_items)
-        log(f"Notification sent: {new_items} new items.")
+        popup_alert(f"{new_items} new item(s) received and ready to curate.")
+        log(f"Popup shown: {new_items} new items.")
     else:
         log("No new items to notify.")
 

@@ -75,3 +75,27 @@ with open(INDEX_FILE, "w", encoding="utf-8") as f:
     json.dump(items, f, indent=2)
 
 print("index.json updated.")
+
+import subprocess
+
+def run(cmd):
+    """Run a shell command and return (success, output)."""
+    result = subprocess.run(cmd, capture_output=True, text=True, shell=True)
+    return (result.returncode == 0, result.stdout.strip() + result.stderr.strip())
+
+# Stage only the published news + index.json
+run("git add news/published news/index.json")
+
+# Check if anything is staged
+success, diff_output = run("git diff --cached --quiet")
+
+# git diff --cached --quiet returns:
+#   0 → no differences (nothing to commit)
+#   1 → differences exist (something to commit)
+if success:
+    print("No news changes to commit.")
+else:
+    # Commit and push
+    run('git commit -m "Publish news"')
+    run("git push")
+    print("News committed and pushed.")
