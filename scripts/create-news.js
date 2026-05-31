@@ -36,12 +36,13 @@ author: ${author}
 `;
 
     const fullMessage =
-`==============================
+`
+
+SUGGESTED FILENAME: ${filename}
+
+==============================
  COPY EVERYTHING BELOW THIS LINE
 ==============================
-
-FILENAME: ${filename}
-
 ${yaml}
 # ${title}
 
