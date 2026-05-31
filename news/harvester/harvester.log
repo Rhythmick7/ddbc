@@ -1,0 +1,101 @@
+[2026-05-31 10:21:09] ----- Harvester run started -----
+[2026-05-31 10:21:09] Connecting to Gmail IMAP...
+[2026-05-31 10:21:10] IMAP login successful.
+[2026-05-31 10:21:10] Found 0 unread matching emails.
+[2026-05-31 10:21:10] No new items to notify.
+[2026-05-31 10:21:10] ----- Harvester run finished -----
+
+[2026-05-31 10:29:29] ----- Harvester run started -----
+[2026-05-31 10:29:29] Connecting to Gmail IMAP...
+[2026-05-31 10:29:30] IMAP login successful.
+[2026-05-31 10:29:30] Found 0 unread matching emails.
+[2026-05-31 10:29:30] No new items to notify.
+[2026-05-31 10:29:31] ----- Harvester run finished -----
+
+[2026-05-31 15:09:06] ----- Harvester run started -----
+[2026-05-31 15:09:06] Connecting to Gmail IMAP...
+[2026-05-31 15:09:06] ERROR: [Errno 11001] getaddrinfo failed
+[2026-05-31 15:09:06] ----- Harvester run finished -----
+
+[2026-05-31 16:06:48] ----- Harvester run started -----
+[2026-05-31 16:06:48] Connecting to Gmail IMAP...
+[2026-05-31 16:16:13] ----- Harvester run started -----
+[2026-05-31 16:16:13] Connecting to Gmail IMAP...
+[2026-05-31 16:16:14] IMAP login successful.
+[2026-05-31 16:16:14] Found 4 matching emails.
+[2026-05-31 16:16:14] Processing email ID 79...
+[2026-05-31 16:16:14] Found 1 payload blocks in this email.
+[2026-05-31 16:16:14] Created: 2026-05-30-6-man-vets-hosting.txt
+[2026-05-31 16:16:14] Processing email ID 81...
+[2026-05-31 16:16:15] Found 1 payload blocks in this email.
+[2026-05-31 16:16:15] Created: 2026-05-30-our-green-at-denby-dale.txt
+[2026-05-31 16:16:15] Processing email ID 82...
+[2026-05-31 16:16:15] Found 0 payload blocks in this email.
+[2026-05-31 16:16:15] Processing email ID 84...
+[2026-05-31 16:16:15] ERROR: 'NoneType' object is not subscriptable
+[2026-05-31 16:16:15] ----- Harvester run finished -----
+
+[2026-05-31 16:19:10] ----- Harvester run started -----
+[2026-05-31 16:19:10] Connecting to Gmail IMAP...
+[2026-05-31 16:19:12] IMAP login successful.
+[2026-05-31 16:19:12] Found 0 matching emails.
+[2026-05-31 16:19:12] No new items to notify.
+[2026-05-31 16:19:13] ----- Harvester run finished -----
+
+[2026-05-31 16:24:03] ----- Harvester run started -----
+[2026-05-31 16:24:03] Connecting to Gmail IMAP...
+[2026-05-31 16:24:05] IMAP login successful.
+[2026-05-31 16:24:05] Found 1 matching emails.
+[2026-05-31 16:24:05] Processing email ID 75...
+[2026-05-31 16:24:06] Found 1 payload blocks in this email.
+[2026-05-31 16:24:06] Filename not found in payload block.
+[2026-05-31 16:24:06] No new items to notify.
+[2026-05-31 16:24:07] ----- Harvester run finished -----
+
+[2026-05-31 16:25:33] ----- Harvester run started -----
+[2026-05-31 16:25:33] Connecting to Gmail IMAP...
+[2026-05-31 16:25:33] IMAP login successful.
+[2026-05-31 16:25:33] Found 0 matching emails.
+[2026-05-31 16:25:33] No new items to notify.
+[2026-05-31 16:25:34] ----- Harvester run finished -----
+
+[2026-05-31 16:46:50] ----- Harvester run started -----
+[2026-05-31 16:46:50] Connecting to Gmail IMAP...
+[2026-05-31 16:46:50] IMAP login successful.
+[2026-05-31 16:46:50] Found 3 matching emails.
+[2026-05-31 16:46:50] Processing email ID 71...
+[2026-05-31 16:46:50] Found 1 payload blocks in this email.
+[2026-05-31 16:46:50] Filename not found in payload block.
+[2026-05-31 16:46:51] Processing email ID 72...
+[2026-05-31 16:46:51] Found 1 payload blocks in this email.
+[2026-05-31 16:46:51] Filename not found in payload block.
+[2026-05-31 16:46:52] Processing email ID 73...
+[2026-05-31 16:46:52] ERROR: 'NoneType' object is not subscriptable
+[2026-05-31 16:46:52] ----- Harvester run finished -----
+
+[2026-05-31 16:50:04] ----- Harvester run started -----
+[2026-05-31 16:50:04] Connecting to Gmail IMAP...
+[2026-05-31 16:50:05] IMAP login successful.
+[2026-05-31 16:50:05] Found 2 matching emails.
+[2026-05-31 16:50:05] Processing email ID 71...
+[2026-05-31 16:50:05] Found 1 payload blocks in this email.
+[2026-05-31 16:50:05] Filename not found in payload block.
+[2026-05-31 16:50:06] Processing email ID 72...
+[2026-05-31 16:50:06] Found 1 payload blocks in this email.
+[2026-05-31 16:50:06] Filename not found in payload block.
+[2026-05-31 16:50:06] No new items to notify.
+[2026-05-31 16:50:07] ----- Harvester run finished -----
+
+[2026-05-31 16:53:24] ----- Harvester run started -----
+[2026-05-31 16:53:24] Connecting to Gmail IMAP...
+[2026-05-31 16:53:25] IMAP login successful.
+[2026-05-31 16:53:25] Found 1 matching emails.
+[2026-05-31 16:53:25] Processing email ID 71...
+[2026-05-31 16:53:25] Found 1 payload blocks in this email.
+[2026-05-31 16:53:25] Filename not found in payload block.
+[2026-05-31 16:53:26] No new items to notify.
+[2026-05-31 16:53:26] ----- Harvester run finished -----
+
+[2026-05-31 16:59:35] ----- Harvester run started -----
+[2026-05-31 16:59:35] Connecting to Gmail IMAP...
+[2026-05-31 16:59:38] IMAP login successful.

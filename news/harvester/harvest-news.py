@@ -4,12 +4,30 @@ import json
 import os
 import pathlib
 import html
+from datetime import datetime
 from winotify import Notification
+
+# -----------------------------
+# Logging setup
+# -----------------------------
+BASE_DIR = pathlib.Path(__file__).parent
+LOG_PATH = BASE_DIR / "harvester.log"
+
+def log(msg):
+    """Append a timestamped line to harvester.log, with rotation."""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    line = f"[{timestamp}] {msg}\n"
+
+    # Rotate log if > 1 MB
+    if LOG_PATH.exists() and LOG_PATH.stat().st_size > 1_000_000:
+        LOG_PATH.rename(LOG_PATH.with_suffix(".log.bak"))
+
+    with open(LOG_PATH, "a", encoding="utf-8") as f:
+        f.write(line)
 
 # -----------------------------
 # Load config (relative to script)
 # -----------------------------
-BASE_DIR = pathlib.Path(__file__).parent
 CONFIG_PATH = BASE_DIR / "config.json"
 
 with open(CONFIG_PATH, "r") as f:
@@ -36,172 +54,183 @@ def notify_new_items(count):
     toast.show()
 
 # -----------------------------
-# Connect to Gmail IMAP
+# Start log entry
 # -----------------------------
-imap = imaplib.IMAP4_SSL("imap.gmail.com")
-imap.login(EMAIL, APP_PASSWORD)
-imap.select("INBOX")
+log("----- Harvester run started -----")
 
-# -----------------------------
-# Search for unread Formspree emails
-# -----------------------------
-status, messages = imap.search(
-    None,
-    f'(UNSEEN SUBJECT "{SUBJECT_FILTER}")'
-)
+try:
+    # -----------------------------
+    # Connect to Gmail IMAP
+    # -----------------------------
+    log("Connecting to Gmail IMAP...")
+    imap = imaplib.IMAP4_SSL("imap.gmail.com")
+    imap.login(EMAIL, APP_PASSWORD)
+    imap.select("INBOX")
+    log("IMAP login successful.")
 
-if status != "OK":
-    print("IMAP search failed")
-    exit()
+    # -----------------------------
+    # Search for Formspree emails
+    # -----------------------------
+    status, messages = imap.search(
+        None,
+        f'(SUBJECT "{SUBJECT_FILTER}")'
+    )
 
-msg_ids = messages[0].split()
-new_items = 0
-
-# -----------------------------
-# Process each matching email
-# -----------------------------
-for msg_id in msg_ids:
-    status, msg_data = imap.fetch(msg_id, "(RFC822)")
     if status != "OK":
-        continue
+        log("IMAP search failed.")
+        raise RuntimeError("IMAP search failed")
 
-    msg = email.message_from_bytes(msg_data[0][1])
+    msg_ids = messages[0].split()
+    log(f"Found {len(msg_ids)} matching emails.")
 
-    # Extract LAST text/plain part (Gmail threads prepend older messages)
-    body = None
-    if msg.is_multipart():
-        for part in msg.walk():
-            if part.get_content_type() == "text/plain":
-                body = part.get_payload(decode=True).decode(errors="ignore")
-    else:
-        body = msg.get_payload(decode=True).decode(errors="ignore")
-
-    if not body:
-        print("No usable text/plain part found")
-        continue
-
-    lines = body.splitlines()
+    new_items = 0
 
     # -----------------------------
-    # Find ALL divider indices
+    # Process each matching email
     # -----------------------------
-    divider_indices = [
-        i for i, line in enumerate(lines)
-        if "COPY EVERYTHING BELOW THIS LINE" in line
-    ]
+    for msg_id in msg_ids:
+        log(f"Processing email ID {msg_id.decode()}...")
 
-    if not divider_indices:
-        print("No payload blocks found")
-        continue
-
-    # -----------------------------
-    # Process each payload block independently
-    # -----------------------------
-    for div_index in divider_indices:
-        payload_lines = lines[div_index+1:]
-
-        # -----------------------------
-        # Extract filename
-        # -----------------------------
-        filename = None
-        for line in payload_lines:
-            if line.startswith(FILENAME_MARKER):
-                filename = line.replace(FILENAME_MARKER, "").strip()
-                break
-
-        if not filename:
-            print("Could not find filename in payload block")
+        status, msg_data = imap.fetch(msg_id, "(RFC822)")
+        if status != "OK":
+            log("Failed to fetch email.")
             continue
 
-        full_path = os.path.join(TARGET_FOLDER, filename)
+        msg = email.message_from_bytes(msg_data[0][1])
 
-        # Skip duplicates
-        if os.path.exists(full_path):
-            print(f"Skipping duplicate: {filename}")
+        # Extract LAST text/plain part
+        body = None
+        if msg.is_multipart():
+            for part in msg.walk():
+                if part.get_content_type() == "text/plain":
+                    body = part.get_payload(decode=True).decode(errors="ignore")
+        else:
+            body = msg.get_payload(decode=True).decode(errors="ignore")
+
+        if not body:
+            log("No usable text/plain part found.")
+            continue
+
+        lines = body.splitlines()
+
+        # -----------------------------
+        # Find ALL divider indices
+        # -----------------------------
+        divider_indices = [
+            i for i, line in enumerate(lines)
+            if "COPY EVERYTHING BELOW THIS LINE" in line
+        ]
+
+        log(f"Found {len(divider_indices)} payload blocks in this email.")
+
+        if not divider_indices:
             continue
 
         # -----------------------------
-        # Extract YAML start/end
+        # Process each payload block
         # -----------------------------
-        yaml_start = None
-        yaml_end = None
+        for div_index in divider_indices:
+            payload_lines = lines[div_index+1:]
 
-        for i, line in enumerate(payload_lines):
-            if line.strip() == "---":
-                if yaml_start is None:
-                    yaml_start = i
-                elif yaml_end is None:
-                    yaml_end = i
+            # Extract filename
+            filename = None
+            for line in payload_lines:
+                if line.startswith(FILENAME_MARKER):
+                    filename = line.replace(FILENAME_MARKER, "").strip()
                     break
 
-        if yaml_start is None or yaml_end is None:
-            print(f"YAML not found in {filename}")
-            continue
+            if not filename:
+                log("Filename not found in payload block.")
+                continue
 
-        yaml_lines = payload_lines[yaml_start:yaml_end+1]
+            full_path = os.path.join(TARGET_FOLDER, filename)
 
-        # Remove blank lines inside YAML
-        yaml_clean = []
-        for line in yaml_lines:
-            if line.strip() == "---":
-                yaml_clean.append(line)
-            elif line.strip() != "":
-                yaml_clean.append(line)
+            if os.path.exists(full_path):
+                log(f"Skipping duplicate: {filename}")
+                continue
+
+            # Extract YAML
+            yaml_start = None
+            yaml_end = None
+
+            for i, line in enumerate(payload_lines):
+                if line.strip() == "---":
+                    if yaml_start is None:
+                        yaml_start = i
+                    elif yaml_end is None:
+                        yaml_end = i
+                        break
+
+            if yaml_start is None or yaml_end is None:
+                log(f"YAML not found in {filename}")
+                continue
+
+            yaml_lines = payload_lines[yaml_start:yaml_end+1]
+
+            yaml_clean = []
+            for line in yaml_lines:
+                if line.strip() == "---":
+                    yaml_clean.append(line)
+                elif line.strip() != "":
+                    yaml_clean.append(line)
+
+            # Extract content
+            content_lines = []
+            for line in payload_lines[yaml_end+1:]:
+                stripped = line.strip()
+                if "This form was submitted" in stripped or stripped.startswith("Submitted"):
+                    break
+                content_lines.append(line)
+
+            content_lines = [html.unescape(line) for line in content_lines]
+
+            clean_content = []
+            blank = False
+            for line in content_lines:
+                if line.strip() == "":
+                    if not blank:
+                        clean_content.append("")
+                    blank = True
+                else:
+                    clean_content.append(line)
+                    blank = False
+
+            final_payload = (
+                "\n".join(yaml_clean).strip()
+                + "\n\n"
+                + "\n".join(clean_content).strip()
+                + "\n"
+            )
+
+            # -----------------------------
+            # Write file (INSIDE the loop!)
+            # -----------------------------
+            with open(full_path, "w", encoding="utf-8") as f:
+                f.write(final_payload)
+
+            log(f"Created: {filename}")
+            new_items += 1
 
         # -----------------------------
-        # Extract content until submission timestamp
+        # Move email to Processed-News
         # -----------------------------
-        content_lines = []
-        for line in payload_lines[yaml_end+1:]:
-            stripped = line.strip()
+        imap.copy(msg_id, "Processed-News")
+        imap.store(msg_id, "+FLAGS", "\\Deleted")
 
-            # Robust match for all Formspree variants
-            if "This form was submitted" in stripped or stripped.startswith("Submitted"):
-                break
+    # Notify if needed
+    if new_items > 0:
+        notify_new_items(new_items)
+        log(f"Notification sent: {new_items} new items.")
+    else:
+        log("No new items to notify.")
 
-            content_lines.append(line)
+    # Finalise moves
+    imap.expunge()
 
-        # Decode HTML entities
-        content_lines = [html.unescape(line) for line in content_lines]
+    imap.close()
+    imap.logout()
 
-        # Collapse multiple blank lines
-        clean_content = []
-        blank = False
-        for line in content_lines:
-            if line.strip() == "":
-                if not blank:
-                    clean_content.append("")
-                blank = True
-            else:
-                clean_content.append(line)
-                blank = False
+except Exception as e:
+    log(f"ERROR: {e}")
 
-        # -----------------------------
-        # Combine YAML + content
-        # -----------------------------
-        final_payload = (
-            "\n".join(yaml_clean).strip()
-            + "\n\n"
-            + "\n".join(clean_content).strip()
-            + "\n"
-        )
-
-        # -----------------------------
-        # Write output file
-        # -----------------------------
-        with open(full_path, "w", encoding="utf-8") as f:
-            f.write(final_payload)
-
-        new_items += 1
-
-    # Mark email as read
-    imap.store(msg_id, "+FLAGS", "\\Seen")
-
-# -----------------------------
-# Notify user if new items found
-# -----------------------------
-if new_items > 0:
-    notify_new_items(new_items)
-
-imap.close()
-imap.logout()
+log("----- Harvester run finished -----\n")
