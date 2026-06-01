@@ -1,13 +1,31 @@
-/* Markdown Tips Toggle */
-document.getElementById("md-toggle").addEventListener("click", function () {
-    const panel = document.getElementById("md-tips");
-    if (panel.style.display === "block") {
-        panel.style.display = "none";
-        this.textContent = "Show Markdown Tips";
-    } else {
-        panel.style.display = "block";
-        this.textContent = "Hide Formatting Tips";
-    }
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* Markdown Tips Toggle */
+    document.getElementById("md-toggle").addEventListener("click", function () {
+        const panel = document.getElementById("md-tips");
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+            this.textContent = "Show Formatting Tips";
+        } else {
+            panel.style.display = "block";
+            this.textContent = "Hide Formatting Tips";
+        }
+    });
+
+    /* Emoji insertion */
+    window.insertEmoji = function (emoji) {
+        const textarea = document.getElementById("body");
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+
+        textarea.value = text.slice(0, start) + emoji + text.slice(end);
+
+        textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+        textarea.focus();
+    };
+
 });
 
 /* Payload Builder */

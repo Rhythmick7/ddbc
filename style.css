@@ -388,3 +388,29 @@ tr:hover {
         #md-toggle:hover {
             background: #1976D2;
         }
+.emoji-panel {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f3f3f3;
+    border-left: 4px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.emoji-row {
+    margin: 6px 0;
+    font-size: 1.3rem;
+}
+
+.emoji-help {
+    color: #555;
+    font-size: 0.85rem;
+}
+.emoji-btn {
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 4px;
+}
+.emoji-btn:hover {
+    background: #e0e0e0;
+}

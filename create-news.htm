@@ -5,9 +5,6 @@
     <title>Create News Story</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-
-    <style>
-    </style>
 </head>
 
 <body>
@@ -28,7 +25,6 @@
     <a href="nws.htm" class="BN-Button download">
         Back to the news page
     </a>
-
 
     <div class="news-options">
 
@@ -51,6 +47,58 @@
                     <label>Story</label>
                     <textarea id="body" name="_body" rows="8" required></textarea>
 
+                    <!-- Always-visible emoji panel -->
+                    <div class="emoji-panel">
+                        <strong>Emoji shortcuts</strong>
+
+                        <div class="emoji-row">
+                            <span class="emoji-btn" onclick="insertEmoji('⚪')">⚪</span>   <!-- Jack -->
+                            <span class="emoji-btn" onclick="insertEmoji('⚫')">⚫</span>   <!-- Black wood -->
+                            <span class="emoji-btn" onclick="insertEmoji('🟤')">🟤</span>   <!-- Brown wood -->
+                            <span class="emoji-btn" onclick="insertEmoji('🟢')">🟢</span>   <!-- Green / rink -->
+                            <span class="emoji-btn" onclick="insertEmoji('📏')">📏</span>   <!-- Measure -->
+                            <span class="emoji-btn" onclick="insertEmoji('📸')">📸</span>   <!-- Match photos -->
+                            <span class="emoji-btn" onclick="insertEmoji('🍀')">🍀</span>   <!-- Match photos -->
+                        </div>
+                        <div class="emoji-row">
+                            <span class="emoji-btn" onclick="insertEmoji('🎳')">🎳</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🏏')">🏏</span>
+                            <span class="emoji-btn" onclick="insertEmoji('⚽')">⚽</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🎾')">🎾</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🥎')">🥎</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🏑')">🏑</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🚴‍♂️')">🚴‍♂️</span>
+                        </div>
+                        <div class="emoji-row">
+                            <span class="emoji-btn" onclick="insertEmoji('☀️')">☀️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🌤️')">🌤️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🌧️')">🌧️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🌬️')">🌬️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('❄️')">❄️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🌨️')">🌨️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🌪️')">🌪️</span>
+                        </div>
+                        <div class="emoji-row">
+                            <span class="emoji-btn" onclick="insertEmoji('🏆')">🏆</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🥇')">🥇</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🥈')">🥈</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🥉')">🥉</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🎖️')">🎖️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('🏅')">🏅</span>
+                            <span class="emoji-btn" onclick="insertEmoji('💔')">💔</span>
+                        </div>
+                        <div class="emoji-row">
+                            <span class="emoji-btn" onclick="insertEmoji('🙂')">🙂</span>
+                            <span class="emoji-btn" onclick="insertEmoji('😀')">😀</span>
+                            <span class="emoji-btn" onclick="insertEmoji('😄')">😄</span>
+                            <span class="emoji-btn" onclick="insertEmoji('😍')">😍</span>
+                            <span class="emoji-btn" onclick="insertEmoji('❤️')">❤️</span>
+                            <span class="emoji-btn" onclick="insertEmoji('👍')">👍</span>
+                            <span class="emoji-btn" onclick="insertEmoji('👏')">👏</span>
+                        </div>
+
+                    </div>
+
                     <input type="hidden" id="payload" name="payload">
 
                     <button type="submit">Send</button>
@@ -59,25 +107,19 @@
 
             <button id="md-toggle">Show Formatting Tips</button>
 
-            <div id="md-tips">
+            <div id="md-tips" style="display:none;">
                 <strong>Formatting Tips</strong><br><br>
-                <br>
                 # Heading 1<br>
-                ## Heading 2<br>
-                <br>
+                ## Heading 2<br><br>
                 *italic*<br>
                 **bold**<br>
-                ***bold italic***<br>
-                <br>
+                ***bold italic***<br><br>
                 - bullet list<br>
-                1. numbered list<br>
-                <br>
-                [Link text](https://example.com)<br>
-                <br>
+                1. numbered list<br><br>
+                [Link text](https://example.com)<br><br>
                 Horizontal rule:<br>
                 ---<br>
             </div>
-
 
         </div>
 
@@ -103,7 +145,6 @@
 
     </div>
 </div>
-
 
 <script src="/scripts/create-news.js"></script>
 

@@ -171,3 +171,78 @@
 [2026-05-31 21:59:36] No new items to notify.
 [2026-05-31 21:59:36] ----- Harvester run finished -----
 
+[2026-06-01 05:24:44] ----- Harvester run started -----
+[2026-06-01 05:24:44] Connecting to Gmail IMAP...
+[2026-06-01 05:24:44] IMAP login successful.
+[2026-06-01 05:24:44] Found 0 matching emails.
+[2026-06-01 05:24:44] No new items to notify.
+[2026-06-01 05:24:44] ----- Harvester run finished -----
+
+[2026-06-01 07:14:48] ----- Harvester run started -----
+[2026-06-01 07:14:48] Connecting to Gmail IMAP...
+[2026-06-01 07:14:48] IMAP login successful.
+[2026-06-01 07:14:49] Found 0 matching emails.
+[2026-06-01 07:14:49] No new items to notify.
+[2026-06-01 07:14:49] ----- Harvester run finished -----
+
+[2026-06-01 07:59:35] ----- Harvester run started -----
+[2026-06-01 07:59:35] Connecting to Gmail IMAP...
+[2026-06-01 07:59:35] IMAP login successful.
+[2026-06-01 07:59:35] Found 0 matching emails.
+[2026-06-01 07:59:35] No new items to notify.
+[2026-06-01 07:59:36] ----- Harvester run finished -----
+
+[2026-06-01 09:01:53] ----- Harvester run started -----
+[2026-06-01 09:01:53] Connecting to Gmail IMAP...
+[2026-06-01 09:01:53] ERROR: [Errno 11001] getaddrinfo failed
+[2026-06-01 09:01:53] ----- Harvester run finished -----
+
+[2026-06-01 09:59:35] ----- Harvester run started -----
+[2026-06-01 09:59:35] Connecting to Gmail IMAP...
+[2026-06-01 09:59:35] IMAP login successful.
+[2026-06-01 09:59:35] Found 0 matching emails.
+[2026-06-01 09:59:35] No new items to notify.
+[2026-06-01 09:59:35] ----- Harvester run finished -----
+
+[2026-06-01 10:59:35] ----- Harvester run started -----
+[2026-06-01 10:59:35] Connecting to Gmail IMAP...
+[2026-06-01 10:59:35] IMAP login successful.
+[2026-06-01 10:59:35] Found 1 matching emails.
+[2026-06-01 10:59:35] Processing email ID 75...
+[2026-06-01 10:59:36] Found 1 payload blocks in this email.
+[2026-06-01 10:59:36] Created: 2026-06-01-denby-dale-bc-internal-competitions.txt
+[2026-06-01 13:02:27] ----- Harvester run started -----
+[2026-06-01 13:02:27] Connecting to Gmail IMAP...
+[2026-06-01 13:02:28] IMAP login successful.
+[2026-06-01 13:02:28] Found 0 matching emails.
+[2026-06-01 13:02:28] No new items to notify.
+[2026-06-01 13:02:28] ----- Harvester run finished -----
+
+[2026-06-01 13:59:35] ----- Harvester run started -----
+[2026-06-01 13:59:35] Connecting to Gmail IMAP...
+[2026-06-01 13:59:36] IMAP login successful.
+[2026-06-01 13:59:36] Found 0 matching emails.
+[2026-06-01 13:59:36] No new items to notify.
+[2026-06-01 13:59:36] ----- Harvester run finished -----
+
+[2026-06-01 14:59:35] ----- Harvester run started -----
+[2026-06-01 14:59:35] Connecting to Gmail IMAP...
+[2026-06-01 14:59:35] IMAP login successful.
+[2026-06-01 14:59:35] Found 0 matching emails.
+[2026-06-01 14:59:35] No new items to notify.
+[2026-06-01 14:59:35] ----- Harvester run finished -----
+
+[2026-06-01 15:59:35] ----- Harvester run started -----
+[2026-06-01 15:59:35] Connecting to Gmail IMAP...
+[2026-06-01 15:59:36] IMAP login successful.
+[2026-06-01 15:59:36] Found 0 matching emails.
+[2026-06-01 15:59:36] No new items to notify.
+[2026-06-01 15:59:36] ----- Harvester run finished -----
+
+[2026-06-01 17:11:19] ----- Harvester run started -----
+[2026-06-01 17:11:19] Connecting to Gmail IMAP...
+[2026-06-01 17:11:20] IMAP login successful.
+[2026-06-01 17:11:20] Found 0 matching emails.
+[2026-06-01 17:11:20] No new items to notify.
+[2026-06-01 17:11:20] ----- Harvester run finished -----
+
