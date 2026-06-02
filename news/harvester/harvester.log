@@ -314,3 +314,10 @@
 [2026-06-02 11:59:36] No new items to notify.
 [2026-06-02 11:59:36] ----- Harvester run finished -----
 
+[2026-06-02 16:59:35] ----- Harvester run started -----
+[2026-06-02 16:59:35] Connecting to Gmail IMAP...
+[2026-06-02 16:59:36] IMAP login successful.
+[2026-06-02 16:59:36] Found 0 matching emails.
+[2026-06-02 16:59:36] No new items to notify.
+[2026-06-02 16:59:37] ----- Harvester run finished -----
+
