@@ -4,5 +4,6 @@
     "target_folder": "C:\\Github\\ddbc\\news\\to-be-published",
     "subject_filter": "New submission from DDBC-News",
     "notification_text": "new news item(s) received and ready to curate.",
-    "filename_marker": "SUGGESTED FILENAME:"
+    "filename_marker": "SUGGESTED FILENAME:",
+    "log_location": "C:\\Github"
 }
