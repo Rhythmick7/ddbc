@@ -11,10 +11,10 @@ The draws for ladies singles, mens singles and pairs are now up on the club noti
 The draws are included here (without phone numbers) for reference.
 
 ## Ladies Singles
-![Ladies Singles](//media/2026-ladies-comp.png)
+![Ladies Singles](/media/2026-ladies-comp.png)
 
 ## Mens Singles
-![Mens Singles](//media/2026-mens-comp.png)
+![Mens Singles](/media/2026-mens-comp.png)
 
 ## Pairs
-![Pairs](//media/2026-pairs-comp.png)
+![Pairs](/media/2026-pairs-comp.png)
