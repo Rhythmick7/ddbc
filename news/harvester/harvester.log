@@ -711,3 +711,10 @@
 [2026-06-08 16:50:22] Popup shown: 1 new items.
 [2026-06-08 16:50:22] ----- Harvester run finished -----
 
+[2026-06-08 16:59:35] ----- Harvester run started -----
+[2026-06-08 16:59:35] Connecting to Gmail IMAP...
+[2026-06-08 16:59:35] IMAP login successful.
+[2026-06-08 16:59:35] Found 0 matching emails.
+[2026-06-08 16:59:35] No new items to notify.
+[2026-06-08 16:59:35] ----- Harvester run finished -----
+
