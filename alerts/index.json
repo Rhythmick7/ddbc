@@ -1,7 +1,12 @@
 [
   {
-    "file": "2026-05-29-how-to-find-us.md.txt",
+    "file": "how-to-find-us.md.txt",
     "start": "2026-05-01",
     "end": "2099-12-31"
+  }
+    {
+    "file": "charity-fun-day.md.txt",
+    "start": "2026-06-08",
+    "end": "2026-07-03"
   }
 ]
