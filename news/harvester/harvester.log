@@ -701,3 +701,13 @@
 [2026-06-08 15:59:35] No new items to notify.
 [2026-06-08 15:59:35] ----- Harvester run finished -----
 
+[2026-06-08 16:50:17] ----- Harvester run started -----
+[2026-06-08 16:50:17] Connecting to Gmail IMAP...
+[2026-06-08 16:50:17] IMAP login successful.
+[2026-06-08 16:50:18] Found 1 matching emails.
+[2026-06-08 16:50:18] Processing email ID 82...
+[2026-06-08 16:50:18] Found 1 payload blocks in this email.
+[2026-06-08 16:50:18] Created: 2026-06-08-charity-fun-day-thursday-2nd-july-2026.txt
+[2026-06-08 16:50:22] Popup shown: 1 new items.
+[2026-06-08 16:50:22] ----- Harvester run finished -----
+
