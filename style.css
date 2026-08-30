@@ -269,6 +269,11 @@ tr:hover {
     font-style: italic;     /* makes it italic */
 }
 
+.news-item img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
 
 .news-item {
     margin-bottom: 2.5em;
@@ -414,3 +419,4 @@ tr:hover {
 .emoji-btn:hover {
     background: #e0e0e0;
 }
+
